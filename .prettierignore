@@ -1,0 +1,5 @@
+# Remove formating from this to prevent tab indentation
+policyConfigs.js
+
+# Remove this from formatting for local AFJ Development
+aries-framework-javascript-dev

@@ -1,0 +1,72 @@
+{
+  "name": "cardeaholder",
+  "version": "2.0.2",
+  "private": true,
+  "scripts": {
+    "style-watch": "onchange '**/*.js' -- prettier --write {{changed}}",
+    "style-check": "prettier --check '**/*.js'",
+    "style-format": "prettier --write '**/*.js'",
+    "lint": "eslint .",
+    "test": "jest",
+    "start": "react-native start --reset-cache",
+    "postinstall": "patch-package",
+    "android": "react-native run-android --variant=devDebug --appIdSuffix=dev",
+    "android:prod": "react-native run-android --variant=prodDebug",
+    "ios": "react-native run-ios",
+    "postversion": "react-native-version --never-amend"
+  },
+  "dependencies": {
+    "@react-native-community/async-storage": "^1.12.0",
+    "@react-native-picker/picker": "^1.9.4",
+    "aries-framework": "file:aries-framework-v0.0.5-unstable.0-datatransfer.2.tgz",
+    "axios": "^0.21.0",
+    "patch-package": "^6.4.7",
+    "react": "16.9.0",
+    "react-native": "0.61.5",
+    "react-native-camera": "^3.31.1",
+    "react-native-config": "^1.4.2",
+    "react-native-date-picker": "^3.2.7",
+    "react-native-device-info": "^8.1.3",
+    "react-native-fs": "^2.16.6",
+    "react-native-get-random-values": "^1.4.0",
+    "react-native-keychain": "^6.2.0",
+    "react-native-markdown-display": "^7.0.0-alpha.2",
+    "react-native-mrz": "Indicio-tech/react-native-mrz#1.0.1",
+    "react-native-picker-select": "^8.0.4",
+    "react-native-qrcode-svg": "^6.0.6",
+    "react-native-svg": "^12.1.0",
+    "react-router-native": "^5.2.0",
+    "rn-indy-sdk": "^0.1.10",
+    "uuid": "^8.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/runtime": "^7.6.2",
+    "@commitlint/cli": "^8.3.5",
+    "@react-native-community/eslint-config": "^0.0.5",
+    "babel-jest": "^24.9.0",
+    "commitlint": "^8.3.5",
+    "eslint": "^6.5.1",
+    "husky": "^4.2.5",
+    "jest": "^24.9.0",
+    "metro-react-native-babel-preset": "^0.58.0",
+    "prettier": "^2.0.5",
+    "react-native-version": "^4.0.0",
+    "react-test-renderer": "16.9.0"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "jest": {
+    "preset": "react-native",
+    "moduleNameMapper": {
+      "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!react-native|react-router-dom|react-router-native)/"
+    ]
+  }
+}
