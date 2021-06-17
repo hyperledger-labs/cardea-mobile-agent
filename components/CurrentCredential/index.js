@@ -55,13 +55,7 @@ function CurrentCredential(props) {
 
   return (
     <View style={AppStyles.viewOverlay}>
-      <View
-        style={[
-          AppStyles.credView,
-          props.altColor
-            ? AppStyles.grayBackground
-            : AppStyles.secondaryBackground,
-        ]}>
+      <View style={[AppStyles.credView, AppStyles.tertiaryBackground]}>
         <TouchableOpacity
           style={AppStyles.marginBottomSm}
           hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
@@ -83,11 +77,9 @@ function CurrentCredential(props) {
                 style={[
                   AppStyles.tableItem,
                   AppStyles.infoTableItem,
-                  props.altColor
-                    ? AppStyles.secondaryBackground
-                    : AppStyles.grayBackground,
+                  AppStyles.subTableItem,
                 ]}>
-                <View style={{display: 'flex', flex: 1, left: -30}}>
+                <View>
                   <Text
                     style={[
                       {fontSize: 18},

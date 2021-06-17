@@ -53,8 +53,8 @@ function CredentialOffered(props) {
     <>
       <BackButton backPath={'/workflow/connect'} />
       <>
-      <View style={[AppStyles.viewFull, AppStyles.altBg]}>
-        <AppHeaderLarge alt={true} />
+        <View style={[AppStyles.viewFull, AppStyles.altBg]}>
+          <AppHeaderLarge alt={true} />
           <View
             style={[
               AppStyles.tab,

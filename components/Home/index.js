@@ -96,7 +96,11 @@ function Home(props) {
       <View style={[AppStyles.viewFull, AppStyles.altBg]}>
         <AppHeaderLarge alt={true} />
         <View style={[AppStyles.tab, AppStyles.whiteTab]}>
-          {tutorial ? topTutorial : <View style={{paddingTop: 0.146 * ScreenHeight}} />}
+          {tutorial ? (
+            topTutorial
+          ) : (
+            <View style={{paddingTop: 0.146 * ScreenHeight}} />
+          )}
           <TouchableOpacity
             style={[AppStyles.button, Styles.button]}
             onPress={() => {
@@ -115,7 +119,11 @@ function Home(props) {
               Connect
             </Text>
           </TouchableOpacity>
-          {tutorial ? bottomTutorial : <View style={{paddingTop: 0.2 * ScreenHeight}} />}
+          {tutorial ? (
+            bottomTutorial
+          ) : (
+            <View style={{paddingTop: 0.2 * ScreenHeight}} />
+          )}
           <PendingTasks
             setConnection={props.setConnection}
             setCredential={props.setCredential}

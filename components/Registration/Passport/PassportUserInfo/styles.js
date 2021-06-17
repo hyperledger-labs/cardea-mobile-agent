@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     fontSize: normalize(18),
     paddingTop: 12,
     paddingLeft: 8,
-    color: 'black'
+    color: 'black',
   },
 })
 

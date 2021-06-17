@@ -56,7 +56,10 @@ function AppHeaderLarge(props) {
               history.push('/home')
             }}
             disabled={props.disabled ? true : false}>
-            <Image source={props.alt ? Images.logoHeader : Images.logoHeaderColor} style={Styles.headerImage} />
+            <Image
+              source={props.alt ? Images.logoHeader : Images.logoHeaderColor}
+              style={Styles.headerImage}
+            />
           </TouchableOpacity>
         </View>
       )}

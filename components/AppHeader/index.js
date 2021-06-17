@@ -29,7 +29,10 @@ function AppHeader(props) {
       <View style={Styles.header}>
         <View style={Styles.logoIconBox}>
           <View style={Styles.logoIcon}>
-            <Image style={{width: 132, height: 100}} source={Images.logoColor} />
+            <Image
+              style={{width: 132, height: 100}}
+              source={Images.logoColor}
+            />
           </View>
           {!props.hideLine ? <View style={Styles.logoLine} /> : null}
         </View>

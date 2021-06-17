@@ -22,11 +22,7 @@ function CurrentContact(props) {
 
   return (
     <View style={AppStyles.viewOverlay}>
-      <View
-        style={[
-          AppStyles.credView,
-          AppStyles.tertiaryBackground
-        ]}>
+      <View style={[AppStyles.credView, AppStyles.tertiaryBackground]}>
         <TouchableOpacity
           style={AppStyles.marginBottomSm}
           hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}

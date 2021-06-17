@@ -35,10 +35,7 @@ function Navbar(props) {
         style={Styles.navButton}
         component={TouchableOpacity}
         to="/workflow/connect">
-        <Image
-          source={Images.menu}
-          style={{width: 36, height: 20, top: 6}}
-        />
+        <Image source={Images.menu} style={{width: 36, height: 20, top: 6}} />
       </Link>
       <Link
         style={Styles.navButton}

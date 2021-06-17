@@ -641,9 +641,7 @@ function Workflow(props) {
         render={() => {
           return (
             <Message
-              title={
-                'Credential Accepted!'
-              }
+              title={'Credential Accepted!'}
               bgColor={AppStyles.grayBackground}
               textColor={AppStyles.textWhite}
               button={{

@@ -17,7 +17,7 @@ const Styles = StyleSheet.create({
     backgroundColor: secondaryColor,
   },
   tertiaryBackground: {
-    backgroundColor: tertiaryColor
+    backgroundColor: tertiaryColor,
   },
   errorBackground: {
     backgroundColor: errorColor,
@@ -68,7 +68,7 @@ const Styles = StyleSheet.create({
     padding: '2%',
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
-    height: '110%', 
+    height: '110%',
     paddingBottom: '10%',
     display: 'flex',
   },

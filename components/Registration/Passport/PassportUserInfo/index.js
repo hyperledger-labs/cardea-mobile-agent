@@ -146,11 +146,7 @@ function UserInfo(props) {
               AppStyles.marginBottomMd,
             ]}>
             <Text
-              style={[
-                AppStyles.h3,
-                AppStyles.textBlue,
-                AppStyles.textCenter,
-              ]}>
+              style={[AppStyles.h3, AppStyles.textBlue, AppStyles.textCenter]}>
               <Text style={AppStyles.textBold}>Visitor's Passport</Text>
             </Text>
           </View>

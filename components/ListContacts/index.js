@@ -54,7 +54,15 @@ function ListContacts(props) {
       <View style={[AppStyles.viewFull, AppStyles.altBg]}>
         <AppHeaderLarge alt={true} />
         <View style={[Styles.credView, AppStyles.whiteTab]}>
-          <Text style={[AppStyles.h4, AppStyles.textBold, AppStyles.textUpper, AppStyles.textSecondary]}>Connected To:</Text>
+          <Text
+            style={[
+              AppStyles.h4,
+              AppStyles.textBold,
+              AppStyles.textUpper,
+              AppStyles.textSecondary,
+            ]}>
+            Connected To:
+          </Text>
           <ScrollView
             style={{width: '100%'}}
             contentContainerStyle={{width: '100%'}}>

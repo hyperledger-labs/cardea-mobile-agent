@@ -16,7 +16,7 @@ import {
 import {useHistory} from 'react-router-native'
 
 import * as Keychain from 'react-native-keychain'
-import { hasNotch } from 'react-native-device-info'
+import {hasNotch} from 'react-native-device-info'
 
 import AppHeaderLarge from '../../AppHeaderLarge/index.js'
 import BackButton from '../../BackButton/index.js'
@@ -156,7 +156,10 @@ function SetupWizard(props) {
         <LoadingOverlay />
       ) : (
         <View
-          style={[{height: '100%', flexDirection: 'column'}, notchCheck ? {paddingBottom: '3.2%'} : null]}
+          style={[
+            {height: '100%', flexDirection: 'column'},
+            notchCheck ? {paddingBottom: '3.2%'} : null,
+          ]}
           onLayout={(event) => {
             var {x, y, width, height} = event.nativeEvent.layout
             console.log('SetupWizard container:', height)

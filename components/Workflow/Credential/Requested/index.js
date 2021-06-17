@@ -117,8 +117,8 @@ function CredentialRequested(props) {
     <>
       <BackButton backPath={'/workflow/connect'} />
       <>
-      <View style={[AppStyles.viewFull, AppStyles.altBg]}>
-        <AppHeaderLarge alt={true} />
+        <View style={[AppStyles.viewFull, AppStyles.altBg]}>
+          <AppHeaderLarge alt={true} />
           <View
             style={[
               AppStyles.tab,
@@ -206,8 +206,7 @@ function CredentialRequested(props) {
                 ]}>
                 Send Credentials
               </Text>
-              <TouchableOpacity
-                onPress={acceptPresentation}>
+              <TouchableOpacity onPress={acceptPresentation}>
                 <Image source={Images.send} style={Styles.buttonIcon} />
               </TouchableOpacity>
             </View>
