@@ -145,8 +145,8 @@ android {
         applicationId "tech.indicio.cardeaholder"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 9
-        versionName "2.0.2"
+        versionCode 10
+        versionName "1.0.0"
         multiDexEnabled true
         resValue "string", "build_config_package", "tech.indicio.cardeaholder"
 
