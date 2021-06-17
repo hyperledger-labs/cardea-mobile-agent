@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# NOTE(kgriffs): This script is to be used for manually building a release;
+#   in a CI environment we will want to retrieve the password from secure
+#   storage.
+
+set -e
+
+read -s -p "Password for keystore and signing key: " PWD
+echo
+
+# ./gradlew clean
+
+# Build APK and output to app/build/outputs/apk/release
+./gradlew assembleDevRelease -PRELEASE_SIGNING_KEY_PWD=$PWD
+
+# Build AAB and output to app/build/outputs/bundle/release
+./gradlew bundleDevRelease -PRELEASE_SIGNING_KEY_PWD=$PWD
