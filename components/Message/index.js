@@ -23,8 +23,8 @@ function Message(props) {
   let history = useHistory()
 
   return (
-    <View style={[Styles.msgView, AppStyles.altBg]}>
-      <AppHeaderLarge alt={true} />
+    <View style={[Styles.msgView, props.defaultBg ? null : AppStyles.altBg]}>
+      <AppHeaderLarge alt={props.defaultBg ? false : true} />
       <View style={[Styles.innerView, props.bgColor]}>
         {props.image ? (
           <Image
