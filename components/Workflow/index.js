@@ -72,6 +72,7 @@ function Workflow(props) {
   }
 
   //Presentation information
+  const [proofId, setProofId] = useState('')
   const [proofRecord, setProofRecord] = useState({})
   const [requestedCredentials, setRequestedCredentials] = useState({})
 
@@ -198,6 +199,12 @@ function Workflow(props) {
         )
 
         props.setConnection(connectionRecord)
+
+        if (workflow == 'awaiting') {
+          setProofId(event.proofRecord.id)
+          setWorkflow('senddata')
+          break
+        }
 
         try {
           console.log(
@@ -380,24 +387,7 @@ function Workflow(props) {
     if (event.connectionRecord.state === ConnectionState.Complete) {
       console.log('Connection is active, sending data transfer')
 
-      const demographicData = await getData('demographicData')
-      const passportData = await getData('passportData')
-
-      await agentContext.agent.dataTransfer.sendData(
-        demographicData,
-        event.connectionRecord.id,
-        'transfer.demographicdata',
-        'demographic data attachment',
-      )
-
-      await agentContext.agent.dataTransfer.sendData(
-        passportData,
-        event.connectionRecord.id,
-        'transfer.passportdata',
-        'passport data attachment',
-      )
-
-      setWorkflow('connected')
+      setWorkflow('awaiting')
     }
 
     //If the connection becomes active that was used for our QR Code, generate a new invitation
@@ -477,6 +467,18 @@ function Workflow(props) {
     }
   }, [workflow])
 
+  const sendRequestedData = async () => {
+    setWorkflow('sending')
+    const userData = await getData('userData')
+
+    try {
+      await agentContext.agent.proofs.acceptRequest(proofId, userData)
+      setWorkflow('connected')
+    } catch (error) {
+      console.warn('Unable to create proof for request', error)
+    }
+  }
+
   // Mock Credentials
 
   const mockCredential = {
@@ -493,6 +495,18 @@ function Workflow(props) {
 
   return (
     <View>
+      <Route
+        path={`${url}/awaiting`}
+        render={() => {
+          return (
+            <Message
+              title={'Awaiting Request'}
+              bgColor={'#1B2624'}
+              textLight={true}
+              image={Images.blueHexagon}></Message>
+          )
+        }}
+      />
       <Route
         path={`${url}/connect`}
         render={() => (
@@ -572,6 +586,19 @@ function Workflow(props) {
             requestedCredentials={requestedCredentials}
           />
         )}
+      />
+      <Route
+        path={`${url}/senddata`}
+        render={() => {
+          return (
+            <Message
+              title={'Ready to send passport information'}
+              bgColor={'#1B2624'}
+              textLight={true}
+              send={true}
+              sendData={sendRequestedData}></Message>
+          )
+        }}
       />
       <Route
         path={`${url}/sending`}

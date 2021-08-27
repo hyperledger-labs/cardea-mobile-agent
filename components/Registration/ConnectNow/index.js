@@ -47,7 +47,11 @@ function ConnectNow(props) {
             event.proofRecord.requestMessage.indyProofRequest,
           )
 
-          // const demographicData = {
+          // let DOB = new Date(
+          //   `${props.setupData.PassportData.dob.month}/${props.setupData.PassportData.dob.day}/${props.setupData.PassportData.dob.year}`,
+          // )
+
+          // const userData = {
           //   email: props.setupData.ContactInfo.email,
           //   phone: props.setupData.ContactInfo.phone,
           //   address: {
@@ -58,15 +62,6 @@ function ConnectNow(props) {
           //     country: props.setupData.AddressInfo.country,
           //     zip_code: '',
           //   },
-          // }
-
-          // await storeData('demographicData', demographicData)
-
-          // let DOB = new Date(
-          //   `${props.setupData.PassportData.dob.month}/${props.setupData.PassportData.dob.day}/${props.setupData.PassportData.dob.year}`,
-          // )
-
-          // const passportData = {
           //   passport_number: '',
           //   surname: props.setupData.PassportData.names.lastName,
           //   given_names: props.setupData.PassportData.names.names.join(' '),
@@ -81,18 +76,37 @@ function ConnectNow(props) {
           //   authority: '',
           //   photo: '',
           // }
+          const userData = {
+            email: '',
+            phone: '',
+            address: {
+              address_1: '',
+              address_2: '',
+              city: '',
+              state: '',
+              country: '',
+              zip_code: '',
+            },
+            passport_number: '',
+            surname: '',
+            given_names: '',
+            sex: '',
+            date_of_birth: '',
+            place_of_birth: '',
+            nationality: '',
+            date_of_issue: '',
+            date_of_expiration: '',
+            type: '',
+            code: '',
+            authority: '',
+            photo: '',
+          }
 
-          // await storeData('passportData', passportData)
+          await storeData('userData', userData)
 
           let requestedCredential = new RequestedCredentials({
             selfAttestedAttributes: {
-              email: 'asdf@gmail.com',
-              address: 'ABC 123 Street',
-              surname: 'brown',
-              given_names: 'steve',
-              sex: 'male',
-              date_of_birth: '1-20-1992',
-              phone: '555-555-1234',
+              ...userData,
             },
           })
 
@@ -152,7 +166,13 @@ function ConnectNow(props) {
   }
 
   useEffect(() => {
-    confirmEntry()
+    console.log('You are now queued to connect')
+    setLoadingOverlayVisible(true)
+    setQueued(true)
+    console.log('IMPORTANT')
+    if (agentContext.agent.connections) {
+      console.log('connections')
+    }
   }, [])
 
   useEffect(() => {
@@ -165,16 +185,16 @@ function ConnectNow(props) {
         ProofEventType.StateChanged,
         proofsEventHandler,
       )
-    }
-    return function () {
-      agentContext.agent.connections.events.removeListener(
-        ConnectionEventType.StateChanged,
-        connectionEventHandler,
-      )
-      agentContext.agent.proofs.events.removeListener(
-        ProofEventType.StateChanged,
-        proofsEventHandler,
-      )
+      return function () {
+        agentContext.agent.connections.events.removeListener(
+          ConnectionEventType.StateChanged,
+          connectionEventHandler,
+        )
+        agentContext.agent.proofs.events.removeListener(
+          ProofEventType.StateChanged,
+          proofsEventHandler,
+        )
+      }
     }
   })
 
@@ -190,6 +210,7 @@ function ConnectNow(props) {
     console.log('You are now queued to connect')
     setLoadingOverlayVisible(true)
     setQueued(true)
+    console.log('IMPORTANT', agentContext.loading)
   }
 
   const connect = async () => {
@@ -199,7 +220,7 @@ function ConnectNow(props) {
     // )
 
     const invitationRecord = await decodeInvitationFromUrl(
-      'http://witty-kangaroo-62.tun1.indiciotech.io?c_i=eyJAdHlwZSI6ICJkaWQ6c292OkJ6Q2JzTlloTXJqSGlxWkRUVUFTSGc7c3BlYy9jb25uZWN0aW9ucy8xLjAvaW52aXRhdGlvbiIsICJAaWQiOiAiNzIyOWFkODQtZTE3ZS00OTY4LWE5NjQtYWZkOTdhMGZlNTkyIiwgInNlcnZpY2VFbmRwb2ludCI6ICJodHRwOi8vd2l0dHkta2FuZ2Fyb28tNjIudHVuMS5pbmRpY2lvdGVjaC5pbyIsICJyZWNpcGllbnRLZXlzIjogWyJGQmpWTWRDYTZ2WG1oRTExN1JrR2pnMnNIdjJSV0plV1lUdG85Tmd4RkVwZSJdLCAibGFiZWwiOiAiYWxpY2UifQ==',
+      'http://happy-cat-18.tun1.indiciotech.io?c_i=eyJAdHlwZSI6ICJkaWQ6c292OkJ6Q2JzTlloTXJqSGlxWkRUVUFTSGc7c3BlYy9jb25uZWN0aW9ucy8xLjAvaW52aXRhdGlvbiIsICJAaWQiOiAiMWY0ZjdkZGUtOTMwNC00NzA3LWFjNmQtZTdjMDU4MzJmOTI1IiwgInNlcnZpY2VFbmRwb2ludCI6ICJodHRwOi8vaGFwcHktY2F0LTE4LnR1bjEuaW5kaWNpb3RlY2guaW8iLCAibGFiZWwiOiAiYm9iIiwgInJlY2lwaWVudEtleXMiOiBbIkNhNmVUQ2huU3RTVm5ZVGZjWkJMODhGWEJFMWE1REw5RnBqQUJ1MVFqNjVZIl19',
     )
 
     console.log('New Invitation:', invitationRecord)

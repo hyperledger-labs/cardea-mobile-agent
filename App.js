@@ -153,7 +153,7 @@ const App = (props) => {
                 path="/setup-wizard"
                 render={() => (
                   <SetupWizard setAuthenticated={setAuthenticated}>
-                    <Terms
+                    {/* <Terms
                       title={PrivacyPolicy.title}
                       message={PrivacyPolicy.text}
                     />
@@ -161,7 +161,7 @@ const App = (props) => {
                     <PassportDirections />
                     <Passport />
                     <ContactInfo />
-                    <AddressInfo />
+                    <AddressInfo /> */}
                     <ConnectNow />
                     <Confirmed />
                   </SetupWizard>
