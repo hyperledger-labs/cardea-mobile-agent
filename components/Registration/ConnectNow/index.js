@@ -47,51 +47,28 @@ function ConnectNow(props) {
             event.proofRecord.requestMessage.indyProofRequest,
           )
 
-          // let DOB = new Date(
-          //   `${props.setupData.PassportData.dob.month}/${props.setupData.PassportData.dob.day}/${props.setupData.PassportData.dob.year}`,
-          // )
+          let DOB = new Date(
+            `${props.setupData.PassportData.dob.month}/${props.setupData.PassportData.dob.day}/${props.setupData.PassportData.dob.year}`,
+          )
 
-          // const userData = {
-          //   email: props.setupData.ContactInfo.email,
-          //   phone: props.setupData.ContactInfo.phone,
-          //   address: {
-          //     address_1: '',
-          //     address_2: '',
-          //     city: '',
-          //     state: props.setupData.AddressInfo.state,
-          //     country: props.setupData.AddressInfo.country,
-          //     zip_code: '',
-          //   },
-          //   passport_number: '',
-          //   surname: props.setupData.PassportData.names.lastName,
-          //   given_names: props.setupData.PassportData.names.names.join(' '),
-          //   sex: props.setupData.PassportData.sex.full,
-          //   date_of_birth: DOB.toISOString(),
-          //   place_of_birth: '',
-          //   nationality: '',
-          //   date_of_issue: '',
-          //   date_of_expiration: '',
-          //   type: '',
-          //   code: '',
-          //   authority: '',
-          //   photo: '',
-          // }
+          // Using JSON.stringify to pass nested object to requested credential, can be refined
+
           const userData = {
-            email: '',
-            phone: '',
-            address: {
+            email: props.setupData.ContactInfo.email,
+            phone: props.setupData.ContactInfo.phone,
+            address: JSON.stringify({
               address_1: '',
               address_2: '',
               city: '',
-              state: '',
-              country: '',
+              state: props.setupData.AddressInfo.state,
+              country: props.setupData.AddressInfo.country,
               zip_code: '',
-            },
+            }),
             passport_number: '',
-            surname: '',
-            given_names: '',
-            sex: '',
-            date_of_birth: '',
+            surname: props.setupData.PassportData.names.lastName,
+            given_names: props.setupData.PassportData.names.names.join(' '),
+            sex: props.setupData.PassportData.sex.full,
+            date_of_birth: DOB.toISOString(),
             place_of_birth: '',
             nationality: '',
             date_of_issue: '',
@@ -258,7 +235,7 @@ function ConnectNow(props) {
                 AppStyles.marginBottomMd,
                 AppStyles.lineHeightMd,
               ]}>
-              Connect to{'\n'}Health Department{'\n'}
+              Connected to{'\n'}Health Department{'\n'}
             </Text>
             {connectionId ? <Text>Successfully connected!</Text> : null}
             <TouchableOpacity
@@ -272,7 +249,7 @@ function ConnectNow(props) {
                 presentProof()
               }}>
               <Text style={[AppStyles.h2, AppStyles.textWhite]}>
-                Connect Now
+                Send Data
               </Text>
             </TouchableOpacity>
           </View>
