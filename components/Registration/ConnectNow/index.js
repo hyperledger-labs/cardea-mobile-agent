@@ -192,12 +192,8 @@ function ConnectNow(props) {
 
   const connect = async () => {
     console.log('Invitation:', Config.GOVERNMENT_INVITATION)
-    // const invitationRecord = await decodeInvitationFromUrl(
-    //   Config.GOVERNMENT_INVITATION,
-    // )
-
     const invitationRecord = await decodeInvitationFromUrl(
-      'http://happy-cat-18.tun1.indiciotech.io?c_i=eyJAdHlwZSI6ICJkaWQ6c292OkJ6Q2JzTlloTXJqSGlxWkRUVUFTSGc7c3BlYy9jb25uZWN0aW9ucy8xLjAvaW52aXRhdGlvbiIsICJAaWQiOiAiMWY0ZjdkZGUtOTMwNC00NzA3LWFjNmQtZTdjMDU4MzJmOTI1IiwgInNlcnZpY2VFbmRwb2ludCI6ICJodHRwOi8vaGFwcHktY2F0LTE4LnR1bjEuaW5kaWNpb3RlY2guaW8iLCAibGFiZWwiOiAiYm9iIiwgInJlY2lwaWVudEtleXMiOiBbIkNhNmVUQ2huU3RTVm5ZVGZjWkJMODhGWEJFMWE1REw5RnBqQUJ1MVFqNjVZIl19',
+      Config.GOVERNMENT_INVITATION,
     )
 
     console.log('New Invitation:', invitationRecord)
