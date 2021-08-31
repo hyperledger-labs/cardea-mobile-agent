@@ -22,7 +22,7 @@ import groovy.swing.SwingBuilder
  *   // default. Can be overridden with ENTRY_FILE environment variable.
  *   entryFile: "index.android.js",
  *
- *   // https://facebook.github.io/react-native/docs/performance#enable-the-ram-format
+ *   // https://reactnative.dev/docs/performance#enable-the-ram-format
  *   bundleCommand: "ram-bundle",
  *
  *   // whether to bundle JS and assets in debug mode
@@ -80,8 +80,7 @@ import groovy.swing.SwingBuilder
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
-    entryFile: "index.js",
+    enableHermes: true,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -132,6 +131,8 @@ project.ext.envConfigFiles = [
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 android {
+    ndkVersion rootProject.ext.ndkVersion
+
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     compileOptions {
@@ -225,7 +226,7 @@ android {
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
-                        versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+                        defaultConfig.versionCode * 1000 + versionCodes.get(abi)
             }
 
         }
@@ -241,6 +242,17 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation 'net.java.dev.jna:jna:5.2.0'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
+      exclude group:'com.facebook.fbjni'
+    }
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
+        exclude group:'com.facebook.flipper'
+        exclude group:'com.squareup.okhttp3', module:'okhttp'
+    }
+    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
+        exclude group:'com.facebook.flipper'
+    }
 
     implementation 'com.android.support:multidex:1.0.3'
 
