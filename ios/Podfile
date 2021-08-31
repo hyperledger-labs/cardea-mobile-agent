@@ -9,7 +9,6 @@ project 'cardeaholder',
 
 target 'cardeaholder' do
   config = use_native_modules!
-  
   use_react_native!(
     :path => config[:reactNativePath],
     # to enable hermes on iOS, change `false` to `true` and then install pods
@@ -17,9 +16,21 @@ target 'cardeaholder' do
   )
 
   pod 'react-native-mrz', :path => '../node_modules/react-native-mrz'
+  pod 'TesseractOCRiOS', :git => 'https://github.com/Indicio-tech/Tesseract-OCR-iOS.git', :commit => 'ba739ee'
+  
 
   target 'cardeaholderTests' do
     inherit! :complete
     # Pods for testing
+  end
+
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable the next line.
+  use_flipper!()
+
+  post_install do |installer|
+    react_native_post_install(installer)
   end
 end
