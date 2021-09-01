@@ -68,19 +68,6 @@ function Message(props) {
             </Text>
           </TouchableOpacity>
         ) : null}
-        {props.send ? (
-          <TouchableOpacity
-            style={[
-              AppStyles.button,
-              AppStyles.confirmBackground,
-              {marginTop: 30},
-            ]}
-            onPress={() => props.sendData}>
-            <Text style={[AppStyles.h2, AppStyles.textSecondary]}>
-              Send Data
-            </Text>
-          </TouchableOpacity>
-        ) : null}
         {props.children}
         {props.button ? (
           <TouchableOpacity

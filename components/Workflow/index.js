@@ -1,6 +1,13 @@
 import React, {useState, useEffect, useContext} from 'react'
 
-import {Alert, Image, Text, View, TouchableWithoutFeedback} from 'react-native'
+import {
+  Alert,
+  Image,
+  Text,
+  View,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native'
 
 import {
   Prompt,
@@ -31,6 +38,7 @@ import {
   ProofState,
   JsonTransformer,
   PresentationMessage,
+  RequestedCredentials,
 } from 'aries-framework'
 
 import CredentialOffered from './Credential/Offered/index.js'
@@ -201,91 +209,40 @@ function Workflow(props) {
         props.setConnection(connectionRecord)
 
         if (workflow == 'awaiting') {
+          console.log('you got here')
           setProofId(event.proofRecord.id)
           setWorkflow('senddata')
           break
         }
 
-        try {
-          console.log(
-            'Proof Request Message:',
-            event.proofRecord.requestMessage,
-          )
-          console.log(
-            'Proof Request:',
-            event.proofRecord.requestMessage.indyProofRequest,
-          )
+        const userData = await getData('userData')
 
-          const requestedCredential =
-            await agentContext.agent.proofs.getRequestedCredentialsForProofRequest(
-              event.proofRecord.requestMessage.indyProofRequest,
-              undefined,
+        let requestedCredential = new RequestedCredentials({
+          selfAttestedAttributes: {
+            ...userData,
+          },
+        })
+
+        setWorkflow('senddata')
+
+        let attributes = Object.entries(
+          event.proofRecord.requestMessage.indyProofRequest.requestedAttributes,
+        )
+
+        attributes.forEach((attr) => {
+          let currentAttribute = attr[0]
+          if (!requestedCredential.selfAttestedAttributes[currentAttribute]) {
+            console.warn('Missing required attribute: ', currentAttribute)
+            agentContext.agent.basicMessages.sendMessage(
+              connectionRecord,
+              'INSUFFICIENT_CREDENTIALS',
             )
-          console.log('Requested Credentials: ', requestedCredential)
-          setRequestedCredentials(requestedCredential)
-          setProofRecord(event.proofRecord)
-
-          //Catch custom workflows
-          //Check Proof Request for singular schema IDs or cred def IDs
-          let schemas = []
-          let credDefIds = []
-          let attributes = Object.entries(
-            event.proofRecord.requestMessage.indyProofRequest
-              .requestedAttributes,
-          )
-          for (const [key, value] of attributes) {
-            let schema = value.restrictions[0].schemaId
-            if (schema && !schemas.includes(schema)) {
-              schemas.push(schema)
-            }
-
-            let credDef = value.restrictions[0].credentialDefinitionId
-            if (credDef && !credDefIds.includes(credDef)) {
-              credDefIds.push(credDef)
-            }
+            setWorkflow('invalid')
           }
-          console.log('Requested Schemas:', schemas)
-          console.log('Requested Credential Definitions:', credDefIds)
+        })
 
-          if (schemas.length === 1 && schemas[0] === Schemas.TrustedTraveler) {
-            //Determine if trusted traveler and if should be auto sent
-            const auto = await getData('auto_send_trusted_traveler')
-            if (auto) {
-              setWorkflow('sending')
-              console.log(
-                'Request is for a Trusted Traveler, sending proof automatically',
-              )
-              await agentContext.agent.proofs.acceptRequest(
-                event.proofRecord.id,
-                requestedCredential,
-              )
-            } else {
-              setWorkflow('requested')
-            }
-          } else if (
-            (schemas.length === 1 && schemas[0] === Schemas.LabResult) ||
-            (credDefIds.length === 1 &&
-              credDefIds[0] === Config.LAB_RESULT_CRED_DEF_ID)
-          ) {
-            console.log(
-              'Request is for a Test Result, sending proof automatically',
-            )
-            await agentContext.agent.proofs.acceptRequest(
-              event.proofRecord.id,
-              requestedCredential,
-            )
-          } else {
-            setWorkflow('requested')
-          }
-        } catch (error) {
-          console.warn('Unable to create proof for request', error)
-
-          await agentContext.agent.basicMessages.sendMessage(
-            connectionRecord,
-            'INSUFFICIENT_CREDENTIALS',
-          )
-          setWorkflow('invalid')
-        }
+        setRequestedCredentials(requestedCredential)
+        setProofId(event.proofRecord.id)
         break
       case ProofState.PresentationSent:
         console.log('Presentation Sent')
@@ -472,7 +429,10 @@ function Workflow(props) {
     const userData = await getData('userData')
 
     try {
-      await agentContext.agent.proofs.acceptRequest(proofId, userData)
+      await agentContext.agent.proofs.acceptRequest(
+        proofId,
+        requestedCredentials,
+      )
       setWorkflow('connected')
     } catch (error) {
       console.warn('Unable to create proof for request', error)
@@ -594,9 +554,19 @@ function Workflow(props) {
             <Message
               title={'Ready to send passport information'}
               bgColor={'#1B2624'}
-              textLight={true}
-              send={true}
-              sendData={sendRequestedData}></Message>
+              textLight={true}>
+              <TouchableOpacity
+                style={[
+                  AppStyles.button,
+                  AppStyles.confirmBackground,
+                  {marginTop: 30},
+                ]}
+                onPress={() => sendRequestedData()}>
+                <Text style={[AppStyles.h2, AppStyles.textWhite]}>
+                  Send Data
+                </Text>
+              </TouchableOpacity>
+            </Message>
           )
         }}
       />
