@@ -202,47 +202,135 @@ function Workflow(props) {
 
     switch (event.proofRecord.state) {
       case ProofState.RequestReceived:
+        //Get Verifier Connection Record
         const connectionRecord = await agentContext.agent.connections.getById(
           event.proofRecord.connectionId,
         )
 
         props.setConnection(connectionRecord)
 
-        if (workflow == 'awaiting') {
-          console.log('you got here')
-          setProofId(event.proofRecord.id)
-          setWorkflow('senddata')
-          break
-        }
+        //Try and get requested credentials for presentation request 
+        try {
+          console.log(
+            'Proof Request Message:',
+            event.proofRecord.requestMessage,
+            'Proof Request:',
+            event.proofRecord.requestMessage.indyProofRequest,
+          )
 
-        const userData = await getData('userData')
+          const requestedCredentials = await agentContext.agent.proofs.getRequestedCredentialsForProofRequest(
+            event.proofRecord.requestMessage.indyProofRequest,
+            undefined,
+          )
+          console.log('Retrieved Requested Credentials: ', requestedCredentials)
 
-        let requestedCredential = new RequestedCredentials({
-          selfAttestedAttributes: {
-            ...userData,
-          },
-        })
+          //Check specific presentation request cases
 
-        setWorkflow('senddata')
+          let schemas = new Set()
+          let credDefIds = new Set()
+          let attributes = Object.entries(
+            event.proofRecord.requestMessage.indyProofRequest
+              .requestedAttributes,
+          )
+          for (const [key, value] of attributes) {
+            let schema = value.restrictions[0].schemaId
+            if (schema) {
+              schemas.add(schema)
+            }
 
-        let attributes = Object.entries(
-          event.proofRecord.requestMessage.indyProofRequest.requestedAttributes,
-        )
-
-        attributes.forEach((attr) => {
-          let currentAttribute = attr[0]
-          if (!requestedCredential.selfAttestedAttributes[currentAttribute]) {
-            console.warn('Missing required attribute: ', currentAttribute)
-            agentContext.agent.basicMessages.sendMessage(
-              connectionRecord,
-              'INSUFFICIENT_CREDENTIALS',
-            )
-            setWorkflow('invalid')
+            let credDef = value.restrictions[0].credentialDefinitionId
+            if (credDef) {
+              credDefIds.add(credDef)
+            }
           }
-        })
+          console.log('Requested Schemas:', schemas)
+          console.log('Requested Credential Definitions:', credDefIds)
 
-        setRequestedCredentials(requestedCredential)
-        setProofId(event.proofRecord.id)
+          
+          if(schemas.size === 1 || credDefIds.size === 1){
+            switch (true) {
+              case (schemas.has(Schemas.TrustedTraveler)):
+                //Determine if trusted traveler should be auto sent
+                const auto = await getData('auto_send_trusted_traveler')
+                if (auto) {
+                  setWorkflow('sending')
+                  console.log(
+                    'Request is for a Trusted Traveler, sending proof automatically',
+                  )
+                  await agentContext.agent.proofs.acceptRequest(
+                    event.proofRecord.id,
+                    requestedCredential,
+                  )
+                }
+                break
+              case (schemas.has(Schemas.LabResult)):
+              case (schemas.has(Schemas.Vaccination)):
+              case (schemas.has(Schemas.VaccinationExemption)): 
+              case (credDefIds.has(Config.LAB_RESULT_CRED_DEF_ID)):
+              case (credDefIds.has(Config.VACCINATION_CRED_DEF_ID)):
+              case (credDefIds.has(Config.EXEMPTION_CRED_DEF_ID)):
+                console.log(
+                  'Request is required to get a Trusted Traveler, sending automatically',
+                )
+                await agentContext.agent.proofs.acceptRequest(
+                  event.proofRecord.id,
+                  requestedCredential,
+                )
+                break
+            }
+          }
+
+          //Set information for generic presentation request screen
+          const connectionRecord = await agentContext.agent.connections.getById(
+            event.proofRecord.connectionId,
+          )
+          props.setConnection(connectionRecord)
+
+          setRequestedCredentials(requestedCredentials)
+          setProofRecord(event.proofRecord)
+          setWorkflow('requested')
+
+        } catch (error){
+          //Error if getRequestedCredentialsForProofRequest fails
+          console.log("Unable to get requested credentials for proof request", error)
+
+          //Check to see if self attested user data would fufill this request
+          const userData = await getData('userData')
+
+          let requestedCredentials = new RequestedCredentials({
+            selfAttestedAttributes: {
+              ...userData,
+            },
+          })
+
+          let requestedAttributes = Object.keys(
+            event.proofRecord.requestMessage.indyProofRequest.requestedAttributes,
+          )
+
+          //Determine if user data is sufficient for proof request
+          const sufficientData = requestedAttributes.every((requestedAttribute) => {
+            return requestedCredentials.selfAttestedAttributes.includes(requestedAttribute)
+          })
+
+          if(sufficientData){
+            setRequestedCredentials(requestedCredentials)
+            setProofId(event.proofRecord.id)
+            setWorkflow('senddata')
+
+            break
+          }
+          else{
+            console.warn("Missing Required Attributes for Proof Request")
+          }
+
+
+          //Display error screen to user and send error message to Verifier
+          agentContext.agent.basicMessages.sendMessage(
+            connectionRecord,
+            'INSUFFICIENT_CREDENTIALS',
+          )
+          setWorkflow('invalid')
+        }
         break
       case ProofState.PresentationSent:
         console.log('Presentation Sent')
@@ -291,7 +379,10 @@ function Workflow(props) {
 
         switch (presentationMessage.indyProof.identifiers[0].schema_id) {
           case Schemas.LabResult:
-            console.log('Test Result Acked')
+          case Schemas.Vaccination:
+          case Schemas.VaccinationExemption:
+            console.log('Presentation for Trusted Traveler Acked')
+
 
             break
           default:
@@ -343,8 +434,7 @@ function Workflow(props) {
     console.log('Workflows - Connection update event:', event)
     if (event.connectionRecord.state === ConnectionState.Complete) {
       console.log('Connection is active, sending data transfer')
-
-      setWorkflow('awaiting')
+      
     }
 
     //If the connection becomes active that was used for our QR Code, generate a new invitation
@@ -426,7 +516,6 @@ function Workflow(props) {
 
   const sendRequestedData = async () => {
     setWorkflow('sending')
-    const userData = await getData('userData')
 
     try {
       await agentContext.agent.proofs.acceptRequest(
@@ -455,18 +544,6 @@ function Workflow(props) {
 
   return (
     <View>
-      <Route
-        path={`${url}/awaiting`}
-        render={() => {
-          return (
-            <Message
-              title={'Awaiting Request'}
-              bgColor={'#1B2624'}
-              textLight={true}
-              image={Images.blueHexagon}></Message>
-          )
-        }}
-      />
       <Route
         path={`${url}/connect`}
         render={() => (
@@ -633,24 +710,27 @@ function Workflow(props) {
         }}
       />
 
-      <Route
+<Route
         path={`${url}/accepted-test-result`}
         render={() => {
           return (
             <Message
-              title={'Credential Accepted!'}
+              title={
+                'Credential Accepted! \n\nYou are required to share this Test Result Credential with the Aruba Health Department'
+              }
               bgColor={AppStyles.grayBackground}
               textColor={AppStyles.textWhite}
               button={{
                 text: 'Share now',
                 textColor: 'white',
-                backgroundColor: AppStyles.tertiaryBackground.backgroundColor,
+                backgroundColor: AppStyles.secondaryBackground.backgroundColor,
                 action: async () => {
                   const governmentConnectionId = await getData(
                     'governmentConnectionId',
                   )
 
                   if (!governmentConnectionId) {
+                    //TODO: Change to throw an error
                     console.warn('Unable to get government connection Id')
                   }
 
@@ -668,12 +748,12 @@ function Workflow(props) {
                       'https://didcomm.org/present-proof/1.0/presentation-preview',
                     attributes: [
                       {
-                        name: 'patient_first_name',
+                        name: 'patient_surnames',
                         credentialDefinitionId: credDefId,
                         referent: 'test_results',
                       },
                       {
-                        name: 'patient_last_name',
+                        name: 'patient_given_names',
                         credentialDefinitionId: credDefId,
                         referent: 'test_results',
                       },
@@ -683,12 +763,12 @@ function Workflow(props) {
                         referent: 'test_results',
                       },
                       {
-                        name: 'result',
+                        name: 'lab_specimen_collected_date',
                         credentialDefinitionId: credDefId,
                         referent: 'test_results',
                       },
                       {
-                        name: 'observation_date_time',
+                        name: 'lab_observation_date_time',
                         credentialDefinitionId: credDefId,
                         referent: 'test_results',
                       },
@@ -715,11 +795,199 @@ function Workflow(props) {
             <Message
               title={'Verifying your test result....'}
               text={'Please wait for your Happy Traveler Card'}
-              bgColor={AppStyles.tertiaryBackground}
+              bgColor={AppStyles.secondaryBackground}
               textColor={AppStyles.textWhite}></Message>
           )
         }}
       />
+
+<Route
+        path={`${url}/accepted-vaccination`}
+        render={() => {
+          return (
+            <Message
+              title={
+                `Credential Accepted! \n\nYou are required to share this ${credentialConfigs[Schemas.Vaccination].credentialName} Credential with the Aruba Health Department`
+              }
+              bgColor={AppStyles.grayBackground}
+              textColor={AppStyles.textWhite}
+              button={{
+                text: 'Share now',
+                textColor: 'white',
+                backgroundColor: AppStyles.secondaryBackground.backgroundColor,
+                action: async () => {
+                  const governmentConnectionId = await getData(
+                    'governmentConnectionId',
+                  )
+
+                  if (!governmentConnectionId) {
+                    //TODO: Change to throw an error
+                    console.warn('Unable to get government connection Id')
+                  }
+
+                  console.log('Proposing Vaccine presentation to government agent')
+
+                  const credDefId = Config.VACCINATION_CRED_DEF_ID
+
+                  console.log(
+                    'Cred Def ID for presentation proposal:',
+                    credDefId,
+                  )
+
+                  const presentationPreview = {
+                    '@type':
+                      'https://didcomm.org/present-proof/1.0/presentation-preview',
+                    attributes: [
+                      {
+                        name: 'patient_surnames',
+                        credentialDefinitionId: credDefId,
+                        referent: 'test_results',
+                      },
+                      {
+                        name: 'patient_given_names',
+                        credentialDefinitionId: credDefId,
+                        referent: 'test_results',
+                      },
+                      {
+                        name: 'patient_date_of_birth',
+                        credentialDefinitionId: credDefId,
+                        referent: 'test_results',
+                      },
+                      {
+                        name: 'vaccine_disease_target_name',
+                        credentialDefinitionId: credDefId,
+                        referent: 'test_results',
+                      },
+                      {
+                        name: 'vaccine_administration_date',
+                        credentialDefinitionId: credDefId,
+                        referent: 'test_results',
+                      },
+                      {
+                        name: 'series_complete',
+                        credentialDefinitionId: credDefId,
+                        referent: 'test_results',
+                      },
+                    ],
+                    predicates: [],
+                  }
+
+                  setWorkflow('sending-vaccination')
+
+                  console.log('Proposing presentation', presentationPreview)
+                  await agentContext.agent.proofs.proposeProof(
+                    governmentConnectionId,
+                    presentationPreview,
+                  )
+                },
+              }}></Message>
+          )
+        }}
+      />
+      <Route
+        path={`${url}/sending-vaccination`}
+        render={() => {
+          return (
+            <Message
+              title={`Verifying your ${credentialConfigs[Schemas.Vaccination].credentialName}....`}
+              text={'Please wait for your Happy Traveler Card'}
+              bgColor={AppStyles.secondaryBackground}
+              textColor={AppStyles.textWhite}></Message>
+          )
+        }}
+      />
+
+      <Route  
+        path={`${url}/accepted-vaccination-exemption`}
+        render={() => {
+          return (
+            <Message
+              title={
+                `Credential Accepted! \n\nYou are required to share this ${credentialConfigs[Schemas.Vaccination].credentialName} Credential with the Aruba Health Department`
+              }
+              bgColor={AppStyles.grayBackground}
+              textColor={AppStyles.textWhite}
+              button={{
+                text: 'Share now',
+                textColor: 'white',
+                backgroundColor: AppStyles.secondaryBackground.backgroundColor,
+                action: async () => {
+                  const governmentConnectionId = await getData(
+                    'governmentConnectionId',
+                  )
+
+                  if (!governmentConnectionId) {
+                    //TODO: Change to throw an error
+                    console.warn('Unable to get government connection Id')
+                  }
+
+                  console.log('Proposing Vaccine Exemption presentation to government agent')
+
+                  const credDefId = Config.EXEMPTION_CRED_DEF_ID
+
+                  console.log(
+                    'Cred Def ID for presentation proposal:',
+                    credDefId,
+                  )
+
+                  const presentationPreview = {
+                    '@type':
+                      'https://didcomm.org/present-proof/1.0/presentation-preview',
+                    attributes: [
+                      {
+                        name: 'patient_surnames',
+                        credentialDefinitionId: credDefId,
+                        referent: 'test_results',
+                      },
+                      {
+                        name: 'patient_given_names',
+                        credentialDefinitionId: credDefId,
+                        referent: 'test_results',
+                      },
+                      {
+                        name: 'patient_date_of_birth',
+                        credentialDefinitionId: credDefId,
+                        referent: 'test_results',
+                      },
+                      {
+                        name: 'exemption_issue_date',
+                        credentialDefinitionId: credDefId,
+                        referent: 'test_results',
+                      },
+                      {
+                        name: 'exemption_expiration_date',
+                        credentialDefinitionId: credDefId,
+                        referent: 'test_results',
+                      },
+                    ],
+                    predicates: [],
+                  }
+
+                  setWorkflow('sending-vaccination-exemption')
+
+                  console.log('Proposing presentation', presentationPreview)
+                  await agentContext.agent.proofs.proposeProof(
+                    governmentConnectionId,
+                    presentationPreview,
+                  )
+                },
+              }}></Message>
+          )
+        }}
+      />
+      <Route
+        path={`${url}/sending-vaccination-exemption`}
+        render={() => {
+          return (
+            <Message
+              title={`Verifying your ${credentialConfigs[Schemas.VaccinationExemption].credentialName}....`}
+              text={'Please wait for your Happy Traveler Card'}
+              bgColor={AppStyles.secondaryBackground}
+              textColor={AppStyles.textWhite}></Message>
+          )
+        }}
+      />
+
       <Route
         path={`${url}/happy-traveler`}
         render={() => {
