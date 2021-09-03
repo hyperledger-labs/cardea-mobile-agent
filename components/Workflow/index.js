@@ -278,8 +278,9 @@ function Workflow(props) {
                   )
                   await agentContext.agent.proofs.acceptRequest(
                     event.proofRecord.id,
-                    requestedCredential,
+                    requestedCredentials,
                   )
+                  return
                 }
                 break
               case (schemas.has(Schemas.LabResult)):
@@ -293,9 +294,9 @@ function Workflow(props) {
                 )
                 await agentContext.agent.proofs.acceptRequest(
                   event.proofRecord.id,
-                  requestedCredential,
+                  requestedCredentials,
                 )
-                break
+                return
             }
           }
 
@@ -309,6 +310,7 @@ function Workflow(props) {
           setProofRecord(event.proofRecord)
           setWorkflow('requested')
 
+          return
         } catch (error){
           //Error if getRequestedCredentialsForProofRequest fails
           console.log("Unable to get requested credentials for proof request", error)
@@ -328,7 +330,7 @@ function Workflow(props) {
 
           //Determine if user data is sufficient for proof request
           const sufficientData = requestedAttributes.every((requestedAttribute) => {
-            return requestedCredentials.selfAttestedAttributes.includes(requestedAttribute)
+            return requestedCredentials.selfAttestedAttributes[requestedAttribute]
           })
 
           if(sufficientData){
@@ -336,7 +338,7 @@ function Workflow(props) {
             setProofId(event.proofRecord.id)
             setWorkflow('senddata')
 
-            break
+            return
           }
           else{
             console.warn("Missing Required Attributes for Proof Request")
@@ -414,6 +416,191 @@ function Workflow(props) {
         break
     }
   }
+
+  const shareCredentialForTrustedTraveler = async (credDefID) => {
+    console.log(`Proposing presentation to government agent using ${credDefID}`)
+
+    const governmentConnectionId = await getData(
+      'governmentConnectionId',
+    )
+
+    if (!governmentConnectionId) {
+      //TODO: Change to throw an error
+      console.warn('Unable to get government connection Id')
+    }
+
+
+    let presentationPreview
+
+    switch (credDefID){
+      case Config.LAB_RESULT_CRED_DEF_ID:
+        presentationPreview = {
+          '@type':
+            'https://didcomm.org/present-proof/1.0/presentation-preview',
+          attributes: [
+            {
+              name: 'patient_surnames',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_given_names',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_date_of_birth',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_gender_legal',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_country',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_email',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'lab_specimen_collected_date',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'lab_result',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'lab_observation_date_time',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+          ],
+          predicates: [],
+        }
+    
+        setWorkflow('sending-test-result')
+
+        break
+      case Config.VACCINATION_CRED_DEF_ID:
+        presentationPreview = {
+          '@type':
+            'https://didcomm.org/present-proof/1.0/presentation-preview',
+          attributes: [
+            {
+              name: 'patient_surnames',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_given_names',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_date_of_birth',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_gender_legal',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_country',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_email',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'vaccine_administration_date',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'vaccine_series_complete',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+          ],
+          predicates: [],
+        }
+    
+        setWorkflow('sending-vaccination')
+
+        break
+      case Config.EXEMPTION_CRED_DEF_ID:
+        presentationPreview = {
+          '@type':
+            'https://didcomm.org/present-proof/1.0/presentation-preview',
+          attributes: [
+            {
+              name: 'patient_surnames',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_given_names',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_date_of_birth',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_gender_legal',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_country',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'patient_email',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+            {
+              name: 'exemption_expiration_date',
+              credentialDefinitionId: credDefID,
+              referent: 'test_results',
+            },
+          ],
+          predicates: [],
+        }
+    
+        setWorkflow('sending-vaccination-exemption')
+
+        break
+      default:
+        console.warn(`Unknown Credential to propose presentation for by Credential Definition ID ${credDefID}`)
+        return
+    }
+
+    console.log('Proposing presentation', presentationPreview)
+    await agentContext.agent.proofs.proposeProof(
+      governmentConnectionId,
+      presentationPreview,
+    )
+  }
+
 
   const handleBasicMessage = async (event) => {
     console.log('Received Basic Message Event', event)
@@ -726,7 +913,7 @@ function Workflow(props) {
         }}
       />
 
-<Route
+      <Route
         path={`${url}/accepted-test-result`}
         render={() => {
           return (
@@ -740,67 +927,9 @@ function Workflow(props) {
                 text: 'Share now',
                 textColor: 'white',
                 backgroundColor: AppStyles.secondaryBackground.backgroundColor,
-                action: async () => {
-                  const governmentConnectionId = await getData(
-                    'governmentConnectionId',
-                  )
-
-                  if (!governmentConnectionId) {
-                    //TODO: Change to throw an error
-                    console.warn('Unable to get government connection Id')
-                  }
-
-                  console.log('Proposing presentation to government agent')
-
-                  const credDefId = Config.LAB_RESULT_CRED_DEF_ID
-
-                  console.log(
-                    'Cred Def ID for presentation proposal:',
-                    credDefId,
-                  )
-
-                  const presentationPreview = {
-                    '@type':
-                      'https://didcomm.org/present-proof/1.0/presentation-preview',
-                    attributes: [
-                      {
-                        name: 'patient_surnames',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'patient_given_names',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'patient_date_of_birth',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'lab_specimen_collected_date',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'lab_observation_date_time',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                    ],
-                    predicates: [],
-                  }
-
-                  setWorkflow('sending-test-result')
-
-                  console.log('Proposing presentation', presentationPreview)
-                  await agentContext.agent.proofs.proposeProof(
-                    governmentConnectionId,
-                    presentationPreview,
-                  )
-                },
-              }}></Message>
+                action: () => shareCredentialForTrustedTraveler(Config.LAB_RESULT_CRED_DEF_ID),
+              }}
+            />
           )
         }}
       />
@@ -817,7 +946,7 @@ function Workflow(props) {
         }}
       />
 
-<Route
+      <Route
         path={`${url}/accepted-vaccination`}
         render={() => {
           return (
@@ -831,72 +960,9 @@ function Workflow(props) {
                 text: 'Share now',
                 textColor: 'white',
                 backgroundColor: AppStyles.secondaryBackground.backgroundColor,
-                action: async () => {
-                  const governmentConnectionId = await getData(
-                    'governmentConnectionId',
-                  )
-
-                  if (!governmentConnectionId) {
-                    //TODO: Change to throw an error
-                    console.warn('Unable to get government connection Id')
-                  }
-
-                  console.log('Proposing Vaccine presentation to government agent')
-
-                  const credDefId = Config.VACCINATION_CRED_DEF_ID
-
-                  console.log(
-                    'Cred Def ID for presentation proposal:',
-                    credDefId,
-                  )
-
-                  const presentationPreview = {
-                    '@type':
-                      'https://didcomm.org/present-proof/1.0/presentation-preview',
-                    attributes: [
-                      {
-                        name: 'patient_surnames',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'patient_given_names',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'patient_date_of_birth',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'vaccine_disease_target_name',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'vaccine_administration_date',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'series_complete',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                    ],
-                    predicates: [],
-                  }
-
-                  setWorkflow('sending-vaccination')
-
-                  console.log('Proposing presentation', presentationPreview)
-                  await agentContext.agent.proofs.proposeProof(
-                    governmentConnectionId,
-                    presentationPreview,
-                  )
-                },
-              }}></Message>
+                action: () => shareCredentialForTrustedTraveler(Config.VACCINATION_CRED_DEF_ID),
+              }}
+            />
           )
         }}
       />
@@ -927,67 +993,9 @@ function Workflow(props) {
                 text: 'Share now',
                 textColor: 'white',
                 backgroundColor: AppStyles.secondaryBackground.backgroundColor,
-                action: async () => {
-                  const governmentConnectionId = await getData(
-                    'governmentConnectionId',
-                  )
-
-                  if (!governmentConnectionId) {
-                    //TODO: Change to throw an error
-                    console.warn('Unable to get government connection Id')
-                  }
-
-                  console.log('Proposing Vaccine Exemption presentation to government agent')
-
-                  const credDefId = Config.EXEMPTION_CRED_DEF_ID
-
-                  console.log(
-                    'Cred Def ID for presentation proposal:',
-                    credDefId,
-                  )
-
-                  const presentationPreview = {
-                    '@type':
-                      'https://didcomm.org/present-proof/1.0/presentation-preview',
-                    attributes: [
-                      {
-                        name: 'patient_surnames',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'patient_given_names',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'patient_date_of_birth',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'exemption_issue_date',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                      {
-                        name: 'exemption_expiration_date',
-                        credentialDefinitionId: credDefId,
-                        referent: 'test_results',
-                      },
-                    ],
-                    predicates: [],
-                  }
-
-                  setWorkflow('sending-vaccination-exemption')
-
-                  console.log('Proposing presentation', presentationPreview)
-                  await agentContext.agent.proofs.proposeProof(
-                    governmentConnectionId,
-                    presentationPreview,
-                  )
-                },
-              }}></Message>
+                action: () => shareCredentialForTrustedTraveler(Config.EXEMPTION_CRED_DEF_ID),
+              }}
+            />
           )
         }}
       />
