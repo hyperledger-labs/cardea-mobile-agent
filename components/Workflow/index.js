@@ -233,7 +233,7 @@ function Workflow(props) {
           console.log(
             'Proof Request Message:',
             event.proofRecord.requestMessage,
-            'Proof Request:',
+            '\nProof Request:',
             event.proofRecord.requestMessage.indyProofRequest,
           )
 
@@ -452,10 +452,6 @@ function Workflow(props) {
   //Event listener for invitation connection update
   const handleConnectionsUpdate = async (event) => {
     console.log('Workflows - Connection update event:', event)
-    if (event.connectionRecord.state === ConnectionState.Complete) {
-      console.log('Connection is active, sending data transfer')
-      
-    }
 
     //If the connection becomes active that was used for our QR Code, generate a new invitation
     if (invitationConnection.connectionRecord) {

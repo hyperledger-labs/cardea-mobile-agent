@@ -33,10 +33,6 @@ function ConnectNow(props) {
     console.log('- - - - EVENT: ', event)
     switch (event.proofRecord.state) {
       case ProofState.RequestReceived:
-        const connectionRecord = await agentContext.agent.connections.getById(
-          event.proofRecord.connectionId,
-        )
-
         try {
           console.log(
             'Proof Request Message:',
@@ -106,6 +102,7 @@ function ConnectNow(props) {
           setProofId(event.proofRecord.id)
 
           setLoadingOverlayVisible(false)
+          console.log("Compiled requested Credentials")
         } catch (error) {
           console.warn('Unable to create proof for request', error)
         }
@@ -127,7 +124,7 @@ function ConnectNow(props) {
       event.connectionRecord.state === ConnectionState.Complete
     ) {
       try {
-        console.log('Connected to government agent, sending data transfer')
+        console.log('Connected to government agent')
 
         console.log('Setup data:', props.setupData)
 
@@ -146,10 +143,6 @@ function ConnectNow(props) {
     console.log('You are now queued to connect')
     setLoadingOverlayVisible(true)
     setQueued(true)
-    console.log('IMPORTANT')
-    if (agentContext.agent.connections) {
-      console.log('connections')
-    }
   }, [])
 
   useEffect(() => {
@@ -183,13 +176,6 @@ function ConnectNow(props) {
     }
   })
 
-  const confirmEntry = async () => {
-    console.log('You are now queued to connect')
-    setLoadingOverlayVisible(true)
-    setQueued(true)
-    console.log('IMPORTANT', agentContext.loading)
-  }
-
   const connect = async () => {
     console.log('Invitation:', Config.GOVERNMENT_INVITATION)
     const invitationRecord = await decodeInvitationFromUrl(
@@ -210,6 +196,7 @@ function ConnectNow(props) {
   const presentProof = async () => {
     setLoadingOverlayVisible(true)
     try {
+      console.log("Sending Presentation to Government Agent")
       await agentContext.agent.proofs.acceptRequest(proofId, userCredential)
       props.incrementScreen()
     } catch (error) {

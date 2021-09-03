@@ -1,9 +1,9 @@
 export const Schemas = {
-  LabOrder: 'QiPGTNiyXnS218AoTK8h39:2:Lab_Order:1.2',
-  LabResult: 'QiPGTNiyXnS218AoTK8h39:2:Lab_Result:1.1',
-  TrustedTraveler: 'X2JpGAqC7ZFY4hwKG6kLw9:2:Trusted_Traveler:1.0',
-  Vaccination: 'QiPGTNiyXnS218AoTK8h39:2:Vaccination:1.2',
-  VaccinationExemption: 'QiPGTNiyXnS218AoTK8h39:2:Vaccine_Exemption:1.1',
+  LabOrder: 'RuuJwd3JMffNwZ43DcJKN1:2:Lab_Order:1.4',
+  LabResult: 'RuuJwd3JMffNwZ43DcJKN1:2:Lab_Result:1.4',
+  TrustedTraveler: 'RuuJwd3JMffNwZ43DcJKN1:2:Trusted_Traveler:1.4',
+  Vaccination: 'RuuJwd3JMffNwZ43DcJKN1:2:Vaccination:1.4',
+  VaccinationExemption: 'RuuJwd3JMffNwZ43DcJKN1:2:Vaccine_Exemption:1.4',
 }
 
 const credentialConfigs = {
