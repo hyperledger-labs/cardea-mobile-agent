@@ -77,27 +77,27 @@ function ConnectNow(props) {
 
           await storeData('userData', userData)
 
-          let requestedCredential = new RequestedCredentials({
+          let requestedCredentials = new RequestedCredentials({
             selfAttestedAttributes: {
               ...userData,
             },
           })
 
-          setUserCredential(requestedCredential)
+          setUserCredential(requestedCredentials)
 
-          //Check that requested attributes are present
-          let attributes = Object.entries(
-            event.proofRecord.requestMessage.indyProofRequest
-              .requestedAttributes,
+          //Check to see if self attested user data would fufill this request
+          let requestedAttributes = Object.keys(
+            event.proofRecord.requestMessage.indyProofRequest.requestedAttributes,
           )
 
-          attributes.forEach((attr) => {
-            let currentAttribute = attr[0]
-            if (!requestedCredential.selfAttestedAttributes[currentAttribute]) {
-              console.warn('Missing required attribute: ', currentAttribute)
-              setVerifiable(false)
-            }
+          //Determine if user data is sufficient for proof request
+          const sufficientData = requestedAttributes.every((requestedAttribute) => {
+            return requestedCredentials.selfAttestedAttributes[requestedAttribute]
           })
+
+          if(!sufficientData){
+            setVerifiable(false)
+          }
 
           setProofId(event.proofRecord.id)
 
