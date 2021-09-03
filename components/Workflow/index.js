@@ -24,6 +24,7 @@ import Config from 'react-native-config'
 import Images from '@assets/images'
 import AppStyles from '@assets/styles'
 import {Schemas} from '@configs/credentialConfigs'
+import credentialConfigs from '@configs/credentialConfigs.js'
 
 import {getData, storeData} from '../../utils/storage'
 
@@ -35,6 +36,7 @@ import {
   ProofEventType,
   BasicMessageEventType,
   ConnectionState,
+  CredentialState,
   ProofState,
   JsonTransformer,
   PresentationMessage,
@@ -46,7 +48,6 @@ import CredentialRequested from './Credential/Requested/index.js'
 import QRCodeScanner from './QRCodeScanner/index.js'
 import Message from '../Message/index.js'
 import ShareAutomatically from '../ShareAutomatically/index.js'
-import credentialConfigs from '@configs/credentialConfigs.js'
 import {getConnectionData} from '../../utils'
 
 function Workflow(props) {
@@ -94,7 +95,8 @@ function Workflow(props) {
       event,
     )
 
-    if (event.credentialRecord.state === 'offer-received') {
+    switch (event.credentialRecord.state) {
+    case CredentialState.OfferReceived:
       console.log(
         'IndyCredentialOffer:',
         event.credentialRecord.offerMessage.indyCredentialOffer,
@@ -154,7 +156,8 @@ function Workflow(props) {
           setWorkflow('offered')
           break
       }
-    } else if (event.credentialRecord.state === 'credential-received') {
+      break
+    case CredentialState.CredentialReceived:
       console.log('attempting to send ack')
 
       await agentContext.agent.credentials.acceptCredential(
@@ -175,6 +178,24 @@ function Workflow(props) {
           props.setCredential(indyCred)
           setWorkflow('accepted-test-result')
           break
+        case Schemas.Vaccination:
+          console.log('Health Vaccination Credential Issued, pushing to status screen')
+
+          //TODO: Add trustedTraveler action item
+          //await storeData('trustedTraveler', true)
+
+          props.setCredential(indyCred)
+          setWorkflow('accepted-vaccination')
+          break
+        case Schemas.VaccinationExemption:
+          console.log('Health Vaccination Exemption Credential Issued, pushing to status screen')
+
+          //TODO: Add trustedTraveler action item
+          //await storeData('trustedTraveler', true)
+
+          props.setCredential(indyCred)
+          setWorkflow('accepted-vaccination-exemption')
+          break
         case Schemas.TrustedTraveler:
           console.log(
             'Trusted Traveler Credential Issued, pushing to custom status screen',
@@ -190,8 +211,6 @@ function Workflow(props) {
           break
       }
     }
-
-    //TODO: Update Credentials List
   }
 
   //Presentation Event
@@ -349,7 +368,9 @@ function Workflow(props) {
 
         switch (presentationMessage.indyProof.identifiers[0].schema_id) {
           case Schemas.LabResult:
-            console.log('Test Result Presentation Sent')
+          case Schemas.Vaccination:
+          case Schemas.VaccinationExemption:
+            console.log('Presentation to get a trusted traveler Sent')
 
             //We have successfully sent the presentation, we should remove the Action Item card at this stage.
             await storeData('trustedTraveler', false)
@@ -382,7 +403,6 @@ function Workflow(props) {
           case Schemas.Vaccination:
           case Schemas.VaccinationExemption:
             console.log('Presentation for Trusted Traveler Acked')
-
 
             break
           default:
