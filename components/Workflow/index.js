@@ -31,7 +31,7 @@ import {
   ProofState,
   JsonTransformer,
   PresentationMessage,
-} from 'aries-framework'
+} from '@aries-framework/core'
 
 import CredentialOffered from './Credential/Offered/index.js'
 import CredentialRequested from './Credential/Requested/index.js'

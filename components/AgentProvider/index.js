@@ -7,7 +7,7 @@ import {
   PollingInboundTransporter,
 } from '../../transporters'
 
-import indy from 'rn-indy-sdk'
+import indy from 'indy-sdk-react-native'
 import {
   Agent,
   ConnectionEventType,
@@ -16,7 +16,8 @@ import {
   CredentialState,
   ConsoleLogger,
   LogLevel,
-} from 'aries-framework'
+} from '@aries-framework/core'
+import {agentDependencies} from '@aries-framework/react-native'
 import {getData, storeData} from '../../utils/storage'
 console.disableYellowBox = true
 
@@ -51,7 +52,7 @@ function AgentProvider(props) {
         indy,
       }
 
-      const newAgent = new Agent(agentConfig)
+      const newAgent = new Agent(agentConfig, agentDependencies)
       const inbound = new PollingInboundTransporter()
       const outbound = new HttpOutboundTransporter(newAgent)
       newAgent.setInboundTransporter(inbound)

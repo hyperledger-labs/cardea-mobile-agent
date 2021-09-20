@@ -16,7 +16,7 @@ import {
   CredentialState,
   JsonTransformer,
   OfferCredentialMessage,
-} from 'aries-framework'
+} from '@aries-framework/core'
 
 import AgentContext from '../AgentProvider/'
 import Images from '@assets/images'

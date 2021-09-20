@@ -1,4 +1,4 @@
-import { Agent, InboundTransporter } from 'aries-framework'
+import { Agent, InboundTransporter } from '@aries-framework/core'
 import axios  from 'axios'
 
 class PollingInboundTransporter implements InboundTransporter {

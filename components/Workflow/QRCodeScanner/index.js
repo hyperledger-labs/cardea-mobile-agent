@@ -18,7 +18,7 @@ import AppHeaderLarge from '../../AppHeaderLarge/index.js'
 import BackButton from '../../BackButton/index.js'
 import LoadingOverlay from '../../LoadingOverlay/index.js'
 
-import {decodeInvitationFromUrl} from 'aries-framework'
+import {decodeInvitationFromUrl} from '@aries-framework/core'
 import AgentContext from '../../AgentProvider/'
 
 import Styles from './styles'

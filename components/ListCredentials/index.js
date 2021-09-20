@@ -24,7 +24,7 @@ import AppStyles from '@assets/styles'
 import Images from '@assets/images.js'
 import Styles from './styles'
 import AgentContext from '../AgentProvider/index.js'
-import {CredentialEventType} from 'aries-framework'
+import {CredentialEventType} from '@aries-framework/core'
 import credentialConfigs from '@configs/credentialConfigs.js'
 
 function ListCredentials(props) {

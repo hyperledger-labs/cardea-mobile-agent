@@ -11,7 +11,7 @@ import {
   ConnectionEventType,
   ConnectionState,
   decodeInvitationFromUrl,
-} from 'aries-framework'
+} from '@aries-framework/core'
 
 function ConnectNow(props) {
   //Reference to the agent context
