@@ -1,18 +1,27 @@
+export const Schemas = {
+  LabOrder: 'RuuJwd3JMffNwZ43DcJKN1:2:Lab_Order:1.4',
+  LabResult: 'RuuJwd3JMffNwZ43DcJKN1:2:Lab_Result:1.4',
+  TrustedTraveler: 'RuuJwd3JMffNwZ43DcJKN1:2:Trusted_Traveler:1.4',
+  Vaccination: 'RuuJwd3JMffNwZ43DcJKN1:2:Vaccination:1.4',
+  VaccinationExemption: 'RuuJwd3JMffNwZ43DcJKN1:2:Vaccine_Exemption:1.4',
+}
+
 const credentialConfigs = {
-  'X2JpGAqC7ZFY4hwKG6kLw9:2:Test_ID:1.2': {
+  [Schemas.LabOrder]: {
     credentialName: 'Health Test Record',
   },
-  'X2JpGAqC7ZFY4hwKG6kLw9:2:Covid_19_Lab_Result:1.5': {
+  [Schemas.LabResult]: {
     credentialName: 'Health Test Result',
   },
-  'X2JpGAqC7ZFY4hwKG6kLw9:2:Trusted_Traveler:1.0': {
+  [Schemas.TrustedTraveler]: {
     credentialName: 'Happy Traveler Card',
+  },
+  [Schemas.Vaccination]: {
+    credentialName: 'Health Vaccination Record',
+  },
+  [Schemas.VaccinationExemption]: {
+    credentialName: 'Health Vaccination Exemption Record',
   },
 }
 
 export default credentialConfigs
-
-export const Schemas = {
-  LabResult: 'X2JpGAqC7ZFY4hwKG6kLw9:2:Covid_19_Lab_Result:1.5',
-  TrustedTraveler: 'X2JpGAqC7ZFY4hwKG6kLw9:2:Trusted_Traveler:1.0',
-}
