@@ -20,6 +20,7 @@
     "@react-native-picker/picker": "^1.9.4",
     "aries-framework": "file:aries-framework-v0.0.5-unstable.0-datatransfer.2.tgz",
     "axios": "^0.21.0",
+    "luxon": "^1.27.0",
     "patch-package": "^6.4.7",
     "react": "16.9.0",
     "react-native": "0.61.5",
