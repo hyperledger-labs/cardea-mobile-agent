@@ -23,10 +23,10 @@ import {getData, storeData} from '../../utils/storage'
 import AgentContext from '../AgentProvider/'
 
 import {
-  ConnectionEventType,
-  CredentialEventType,
-  ProofEventType,
-  BasicMessageEventType,
+  ConnectionEventTypes,
+  CredentialEventTypes,
+  ProofEventTypes,
+  BasicMessageEventTypes,
   ConnectionState,
   ProofState,
   JsonTransformer,
@@ -419,31 +419,31 @@ function Workflow(props) {
 
   useEffect(() => {
     if (!agentContext.loading) {
-      agentContext.agent.credentials.events.on(
-        CredentialEventType.StateChanged,
+      agentContext.agent.events.on(
+        CredentialEventTypes.StateChanged,
         handleCredentialStateChange,
       )
-      agentContext.agent.proofs.events.on(
-        ProofEventType.StateChanged,
+      agentContext.agent.events.on(
+        ProofEventTypes.StateChanged,
         handlePresentationStateChange,
       )
-      agentContext.agent.basicMessages.events.on(
-        BasicMessageEventType.MessageReceived,
+      agentContext.agent.events.on(
+        BasicMessageEventTypes.BasicMessageReceived,
         handleBasicMessage,
       )
       generateInvitation()
 
       return function () {
         agentContext.agent.credentials.events.removeListener(
-          CredentialEventType.StateChanged,
+          CredentialEventTypes.StateChanged,
           handleCredentialStateChange,
         )
         agentContext.agent.proofs.events.removeListener(
-          ProofEventType.StateChanged,
+          ProofEventTypes.StateChanged,
           handlePresentationStateChange,
         )
         agentContext.agent.basicMessages.events.removeListener(
-          BasicMessageEventType.MessageReceived,
+          BasicMessageEventTypes.BasicMessageReceived,
           handleBasicMessage,
         )
       }
@@ -452,14 +452,14 @@ function Workflow(props) {
 
   //Invitation connection event listeners
   useEffect(() => {
-    agentContext.agent.connections.events.on(
-      ConnectionEventType.StateChanged,
+    agentContext.agent.events.on(
+      ConnectionEventTypes.StateChanged,
       handleConnectionsUpdate,
     )
 
     return function () {
       agentContext.agent.connections.events.removeListener(
-        ConnectionEventType.StateChanged,
+        ConnectionEventTypes.StateChanged,
         handleConnectionsUpdate,
       )
     }

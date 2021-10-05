@@ -12,7 +12,7 @@ import {
 
 import {useHistory} from 'react-router-native'
 import {
-  CredentialEventType,
+  CredentialEventTypes,
   CredentialState,
   JsonTransformer,
   OfferCredentialMessage,
@@ -103,14 +103,14 @@ function PendingTasks(props) {
 
   useEffect(() => {
     if (!agentContext.loading) {
-      agentContext.agent.credentials.events.on(
-        CredentialEventType.StateChanged,
+      agentContext.agent.events.on(
+        CredentialEventTypes.StateChanged,
         handleCredentialStateChange,
       )
 
       return function () {
         agentContext.agent.credentials.events.removeListener(
-          CredentialEventType.StateChanged,
+          CredentialEventTypes.StateChanged,
           handleCredentialStateChange,
         )
       }

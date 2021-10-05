@@ -24,7 +24,7 @@ import AppStyles from '@assets/styles'
 import Images from '@assets/images.js'
 import Styles from './styles'
 import AgentContext from '../AgentProvider/index.js'
-import {CredentialEventType} from '@aries-framework/core'
+import {CredentialEventTypes} from '@aries-framework/core'
 import credentialConfigs from '@configs/credentialConfigs.js'
 
 function ListCredentials(props) {
@@ -86,14 +86,14 @@ function ListCredentials(props) {
   //Event listener registration
   useEffect(() => {
     if (!agentContext.loading) {
-      agentContext.agent.credentials.events.on(
-        CredentialEventType.StateChanged,
+      agentContext.agent.events.on(
+        CredentialEventTypes.StateChanged,
         handleCredentialStateChange,
       )
 
       return function cleanup() {
         agentContext.agent.credentials.events.removeAllListeners(
-          CredentialEventType.StateChanged,
+          CredentialEventTypes.StateChanged,
         )
       }
     }

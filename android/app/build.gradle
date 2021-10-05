@@ -120,7 +120,7 @@ def jscFlavor = 'org.webkit:android-jsc:+'
  * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
  * and the benefits of using Hermes will therefore be sharply reduced.
  */
-def enableHermes = project.ext.react.get("enableHermes", true);
+def enableHermes = project.ext.react.get("enableHermes", false);
 
 
 project.ext.envConfigFiles = [
@@ -159,7 +159,7 @@ android {
             enable enableSeparateBuildPerCPUArchitecture
 
             universalApk true  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86", "arm64-v8a"/*, "x86_64"*/ //TODO(JamesKEbert): add x86_64 support from libindy
+            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64" //TODO(JamesKEbert): add x86_64 support from libindy
         }
     }
     signingConfigs {
@@ -230,10 +230,6 @@ android {
             }
 
         }
-    }
-
-    lintOptions {
-        abortOnError false
     }
 }
 

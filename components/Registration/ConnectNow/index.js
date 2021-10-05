@@ -8,9 +8,9 @@ import AppStyles from '@assets/styles'
 import AgentContext from '../../AgentProvider/index.js'
 import {storeData} from '../../../utils/storage'
 import {
-  ConnectionEventType,
+  ConnectionEventTypes,
+  ConnectionInvitationMessage,
   ConnectionState,
-  decodeInvitationFromUrl,
 } from '@aries-framework/core'
 
 function ConnectNow(props) {
@@ -24,10 +24,11 @@ function ConnectNow(props) {
 
   const connectionEventHandler = async (event) => {
     console.log('Connection Event', event)
+    console.log('connection record: ', event.payload.connectionRecord)
 
     if (
-      event.connectionRecord.id === connectionId &&
-      event.connectionRecord.state === ConnectionState.Complete
+      event.payload.connectionRecord.id === connectionId &&
+      event.payload.connectionRecord.state === ConnectionState.Complete
     ) {
       try {
         console.log('Connected to government agent, sending data transfer')
@@ -79,14 +80,14 @@ function ConnectNow(props) {
 
         await agentContext.agent.dataTransfer.sendData(
           demographicData,
-          event.connectionRecord.id,
+          event.payload.connectionRecord.id,
           'transfer.demographicdata',
           'demographic data attachment',
         )
 
         await agentContext.agent.dataTransfer.sendData(
           passportData,
-          event.connectionRecord.id,
+          event.payload.connectionRecord.id,
           'transfer.passportdata',
           'passport data attachment',
         )
@@ -102,14 +103,14 @@ function ConnectNow(props) {
 
   useEffect(() => {
     if (!agentContext.loading) {
-      agentContext.agent.connections.events.on(
-        ConnectionEventType.StateChanged,
+      agentContext.agent.events.on(
+        ConnectionEventTypes.ConnectionStateChanged,
         connectionEventHandler,
       )
 
       return function () {
-        agentContext.agent.connections.events.removeListener(
-          ConnectionEventType.StateChanged,
+        agentContext.agent.events.off(
+          ConnectionEventTypes.ConnectionStateChanged,
           connectionEventHandler,
         )
       }
@@ -132,7 +133,7 @@ function ConnectNow(props) {
 
   const connect = async () => {
     console.log('Invitation:', Config.GOVERNMENT_INVITATION)
-    const invitationRecord = await decodeInvitationFromUrl(
+    const invitationRecord = await ConnectionInvitationMessage.fromUrl(
       Config.GOVERNMENT_INVITATION,
     )
 

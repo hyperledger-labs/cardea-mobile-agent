@@ -2,24 +2,23 @@ import React, {useState, useEffect} from 'react'
 import Config from 'react-native-config'
 
 import {downloadGenesis, storeGenesis} from '../../genesis-utils'
-import {
-  HttpOutboundTransporter,
-  PollingInboundTransporter,
-} from '../../transporters'
 
 import indy from 'indy-sdk-react-native'
 import {
   Agent,
-  ConnectionEventType,
-  BasicMessageEventType,
-  CredentialEventType,
+  AutoAcceptCredential,
+  ConnectionEventTypes,
+  BasicMessageEventTypes,
+  CredentialEventTypes,
   CredentialState,
   ConsoleLogger,
   LogLevel,
+  WsOutboundTransport,
+  MediatorPickupStrategy,
+  HttpOutboundTransport,
 } from '@aries-framework/core'
 import {agentDependencies} from '@aries-framework/react-native'
 import {getData, storeData} from '../../utils/storage'
-console.disableYellowBox = true
 
 const AgentContext = React.createContext({})
 
@@ -28,69 +27,78 @@ function AgentProvider(props) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const initAgent = async () => {
-      let agentConfig = {
-        mediatorUrl: Config.MEDIATOR_URL,
-        genesisUrl: Config.GENESIS_URL,
+    const asyncInit = async () => {
+      try {
+        await initAgent()
+      } catch (err) {
+        console.log(err)
       }
-
-      console.info('Initializing Agent', agentConfig)
-
-      let genesisPath = agentConfig.genesisPath
-      const genesis = await downloadGenesis(agentConfig.genesisUrl)
-      genesisPath = await storeGenesis(genesis, 'genesis.txn')
-
-      agentConfig = {
-        label: 'Cardea Holder',
-        walletConfig: {id: 'wallet4'},
-        walletCredentials: {key: '123'},
-        autoAcceptConnections: true,
-        poolName: 'test-183',
-        ...agentConfig,
-        genesisPath,
-        logger: new ConsoleLogger(LogLevel.debug),
-        indy,
-      }
-
-      const newAgent = new Agent(agentConfig, agentDependencies)
-      const inbound = new PollingInboundTransporter()
-      const outbound = new HttpOutboundTransporter(newAgent)
-      newAgent.setInboundTransporter(inbound)
-      newAgent.setOutboundTransporter(outbound)
-
-      await newAgent.init()
-
-      setAgent(newAgent)
-      setLoading(false)
-
-      console.info('Agent has been initialized')
-
-      const handleBasicMessageReceive = (event) => {
-        console.log(
-          `New Basic Message with verkey ${event.verkey}:`,
-          event.message,
-        )
-      }
-      newAgent.basicMessages.events.on(
-        BasicMessageEventType.MessageReceived,
-        handleBasicMessageReceive,
-      )
-
-      const handleConnectionStateChange = (event) => {
-        console.log(
-          `connection event for: ${event.connectionRecord.id}, previous state -> ${event.previousState} new state: ${event.connectionRecord.state}`,
-        )
-      }
-      newAgent.connections.events.on(
-        ConnectionEventType.StateChanged,
-        handleConnectionStateChange,
-      )
-
-      console.log('connections:', await newAgent.connections.getAll())
     }
 
-    initAgent()
+    asyncInit()
   }, [])
+
+  const initAgent = async () => {
+    let agentConfig = {
+      mediatorConnectionsInvite: Config.MEDIATOR_INVITE_URL,
+      genesisUrl: Config.GENESIS_URL,
+    }
+
+    console.info('Initializing Agent', agentConfig)
+
+    let genesisPath = agentConfig.genesisPath
+    const genesis = await downloadGenesis(agentConfig.genesisUrl)
+    genesisPath = await storeGenesis(genesis, 'genesis.txn')
+
+    agentConfig = {
+      label: 'Cardea Holder',
+      walletConfig: {id: 'wallet4', key: '123'},
+      autoAcceptConnections: true,
+      autoAcceptCredentials: AutoAcceptCredential.ContentApproved,
+      poolName: 'test-183',
+      genesisPath,
+      logger: new ConsoleLogger(LogLevel.debug),
+      mediatorConnectionsInvite: Config.MEDIATOR_INVITE_URL,
+      mediatorPickupStrategy: MediatorPickupStrategy.Implicit,
+    }
+
+    const newAgent = new Agent(agentConfig, agentDependencies)
+    const wsTransport = new WsOutboundTransport()
+    newAgent.registerOutboundTransport(wsTransport, 0)
+
+    let outbound = new HttpOutboundTransport()
+    newAgent.registerOutboundTransport(outbound, 1)
+
+    await newAgent.initialize()
+
+    setAgent(newAgent)
+    setLoading(false)
+
+    console.info('Agent has been initialized')
+
+    const handleBasicMessageReceive = (event) => {
+      console.log(
+        `New Basic Message with verkey ${event.verkey}:`,
+        event.message,
+      )
+    }
+    newAgent.events.on(
+      BasicMessageEventTypes.BasicMessageReceived,
+      handleBasicMessageReceive,
+    )
+
+    const handleConnectionStateChange = (event) => {
+      console.log(
+        `connection event for: ${event.connectionRecord.id}, previous state -> ${event.previousState} new state: ${event.connectionRecord.state}`,
+      )
+    }
+    newAgent.events.on(
+      ConnectionEventTypes.StateChanged,
+      handleConnectionStateChange,
+    )
+
+    console.log('connections:', await newAgent.connections.getAll())
+  }
 
   return (
     <AgentContext.Provider
