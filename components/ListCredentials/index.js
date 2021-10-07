@@ -71,7 +71,7 @@ function ListCredentials(props) {
   //Event listener
   const handleCredentialStateChange = async (event) => {
     console.info(
-      `Credentials State Change, new state: "${event.credentialRecord.state}"`,
+      `Credentials State Change, new state: "${event.payload.credentialRecord.state}"`,
       event,
     )
     getCredentials()
@@ -90,12 +90,6 @@ function ListCredentials(props) {
         CredentialEventTypes.StateChanged,
         handleCredentialStateChange,
       )
-
-      return function cleanup() {
-        agentContext.agent.credentials.events.removeAllListeners(
-          CredentialEventTypes.StateChanged,
-        )
-      }
     }
   }, [agentContext.loading])
 

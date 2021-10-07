@@ -109,7 +109,7 @@ function PendingTasks(props) {
       )
 
       return function () {
-        agentContext.agent.credentials.events.removeListener(
+        agentContext.agent.events.off(
           CredentialEventTypes.StateChanged,
           handleCredentialStateChange,
         )

@@ -18,7 +18,7 @@ import AppHeaderLarge from '../../AppHeaderLarge/index.js'
 import BackButton from '../../BackButton/index.js'
 import LoadingOverlay from '../../LoadingOverlay/index.js'
 
-import {decodeInvitationFromUrl} from '@aries-framework/core'
+import {ConnectionInvitationMessage} from '@aries-framework/core'
 import AgentContext from '../../AgentProvider/'
 
 import Styles from './styles'
@@ -45,7 +45,7 @@ function QRCodeScanner(props) {
     console.log('Scanned QR Code')
     console.log('BARCODE: ', event)
 
-    const decodedInvitation = await decodeInvitationFromUrl(event.data)
+    const decodedInvitation = await ConnectionInvitationMessage.fromUrl(event.data)
 
     console.log('New Invitation:', decodedInvitation)
 
@@ -98,9 +98,10 @@ function QRCodeScanner(props) {
   //Generate a new invitation URL on invitationConnection change
   useEffect(() => {
     if (props.invitationConnection.invitation) {
-      const url = props.invitationConnection.invitation.toUrl(
-        agentContext.agent.agentConfig.mediatorUrl,
-      )
+      const url = props.invitationConnection.invitation.toUrl({
+        domain:
+          agentContext.agent.agentConfig.mediatorConnectionsInvite.split('?')[0],
+      })
       setInvitationURL(url)
     }
   }, [props.invitationConnection])

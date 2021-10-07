@@ -57,7 +57,7 @@ function AgentProvider(props) {
       autoAcceptCredentials: AutoAcceptCredential.ContentApproved,
       poolName: 'test-183',
       genesisPath,
-      logger: new ConsoleLogger(LogLevel.debug),
+      logger: new ConsoleLogger(LogLevel.trace),
       mediatorConnectionsInvite: Config.MEDIATOR_INVITE_URL,
       mediatorPickupStrategy: MediatorPickupStrategy.Implicit,
     }
@@ -78,8 +78,8 @@ function AgentProvider(props) {
 
     const handleBasicMessageReceive = (event) => {
       console.log(
-        `New Basic Message with verkey ${event.verkey}:`,
-        event.message,
+        `New Basic Message with verkey ${event.payload.verkey}:`,
+        event.payload.message,
       )
     }
     newAgent.events.on(
@@ -89,7 +89,7 @@ function AgentProvider(props) {
 
     const handleConnectionStateChange = (event) => {
       console.log(
-        `connection event for: ${event.connectionRecord.id}, previous state -> ${event.previousState} new state: ${event.connectionRecord.state}`,
+        `connection event for: ${event.payload.connectionRecord.id}, previous state -> ${event.payload.previousState} new state: ${event.payload.connectionRecord.state}`,
       )
     }
     newAgent.events.on(
