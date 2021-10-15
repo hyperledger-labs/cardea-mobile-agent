@@ -69,9 +69,7 @@ function CredentialRequested(props) {
         if (!credentialIds.includes(curr[1].credentialId)) {
           credentialIds.push(curr[1].credentialId)
           let credentialToDisplay = {
-            ...(await agentContext.agent.credentials.getIndyCredential(
-              curr[1].credentialId,
-            )),
+            ...(await curr[1].getCredentialInfo()),
             credentialId: curr[1].credentialId,
           }
           if (credentialConfigs[credentialToDisplay.schemaId]) {

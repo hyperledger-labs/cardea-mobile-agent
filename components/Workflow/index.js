@@ -76,7 +76,7 @@ function Workflow(props) {
 
   //Get connection data for credential
   const getConnectionDataFromID = async (connectionID) => {
-    const connection = await agentContext.agent.connections.find(connectionID)
+    const connection = await agentContext.agent.connections.getById(connectionID)
     return getConnectionData(connection)
   }
 
@@ -164,9 +164,7 @@ function Workflow(props) {
         event.payload.credentialRecord.id,
       )
 
-      const indyCred = await agentContext.agent.credentials.getIndyCredential(
-        event.payload.credentialRecord.credentialId,
-      )
+      const indyCred = await event.payload.credentialRecord.getCredentialInfo()
       console.log('IndyCred', indyCred)
       switch (indyCred.schemaId) {
         case Schemas.LabResult:
@@ -398,6 +396,8 @@ function Workflow(props) {
           presentationMessage,
           presentationMessage.indyProof,
         )
+
+        if(event.payload.proofRecord.presentationMessage.indyProof.identifiers.length > 0) {
         console.log(presentationMessage.indyProof.identifiers[0].schema_id)
 
         switch (presentationMessage.indyProof.identifiers[0].schema_id) {
@@ -414,6 +414,7 @@ function Workflow(props) {
         }
 
         break
+        }
     }
   }
 
@@ -661,11 +662,11 @@ function Workflow(props) {
   useEffect(() => {
     if (!agentContext.loading) {
       agentContext.agent.events.on(
-        CredentialEventTypes.StateChanged,
+        CredentialEventTypes.CredentialStateChanged,
         handleCredentialStateChange,
       )
       agentContext.agent.events.on(
-        ProofEventTypes.StateChanged,
+        ProofEventTypes.ProofStateChanged,
         handlePresentationStateChange,
       )
       agentContext.agent.events.on(
@@ -676,11 +677,11 @@ function Workflow(props) {
 
       return function () {
         agentContext.agent.events.off(
-          CredentialEventTypes.StateChanged,
+          CredentialEventTypes.CredentialStateChanged,
           handleCredentialStateChange,
         )
         agentContext.agent.events.off(
-          ProofEventTypes.StateChanged,
+          ProofEventTypes.ProofStateChanged,
           handlePresentationStateChange,
         )
         agentContext.agent.events.off(
@@ -694,13 +695,13 @@ function Workflow(props) {
   //Invitation connection event listeners
   useEffect(() => {
     agentContext.agent.events.on(
-      ConnectionEventTypes.StateChanged,
+      ConnectionEventTypes.ConnectionStateChanged,
       handleConnectionsUpdate,
     )
 
     return function () {
       agentContext.agent.events.off(
-        ConnectionEventTypes.StateChanged,
+        ConnectionEventTypes.ConnectionStateChanged,
         handleConnectionsUpdate,
       )
     }

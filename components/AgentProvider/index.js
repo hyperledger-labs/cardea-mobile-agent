@@ -93,7 +93,7 @@ function AgentProvider(props) {
       )
     }
     newAgent.events.on(
-      ConnectionEventTypes.StateChanged,
+      ConnectionEventTypes.ConnectionStateChanged,
       handleConnectionStateChange,
     )
 

@@ -45,9 +45,7 @@ function ListCredentials(props) {
       console.log('Credential:', credential)
       if (credential.state === 'done') {
         let credentialToDisplay = {
-          ...(await agentContext.agent.credentials.getIndyCredential(
-            credential.credentialId,
-          )),
+          ...(await credential.getCredentialInfo()),
           connection: await getConnectionDataFromID(credential.connectionId),
           id: credential.id,
         }
@@ -64,7 +62,7 @@ function ListCredentials(props) {
 
   //Get connection data for credential
   const getConnectionDataFromID = async (connectionID) => {
-    const connection = await agentContext.agent.connections.find(connectionID)
+    const connection = await agentContext.agent.connections.getById(connectionID)
     return getConnectionData(connection)
   }
 
@@ -87,7 +85,7 @@ function ListCredentials(props) {
   useEffect(() => {
     if (!agentContext.loading) {
       agentContext.agent.events.on(
-        CredentialEventTypes.StateChanged,
+        CredentialEventTypes.CredentialStateChanged,
         handleCredentialStateChange,
       )
     }

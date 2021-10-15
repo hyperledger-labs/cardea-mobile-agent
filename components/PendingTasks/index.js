@@ -35,7 +35,7 @@ function PendingTasks(props) {
 
   //Get connection data for credential
   const getConnectionDataFromID = async (connectionID) => {
-    const connection = await agentContext.agent.connections.find(connectionID)
+    const connection = await agentContext.agent.connections.getById(connectionID)
     return getConnectionData(connection)
   }
 
@@ -104,13 +104,13 @@ function PendingTasks(props) {
   useEffect(() => {
     if (!agentContext.loading) {
       agentContext.agent.events.on(
-        CredentialEventTypes.StateChanged,
+        CredentialEventTypes.CredentialStateChanged,
         handleCredentialStateChange,
       )
 
       return function () {
         agentContext.agent.events.off(
-          CredentialEventTypes.StateChanged,
+          CredentialEventTypes.CredentialStateChanged,
           handleCredentialStateChange,
         )
       }
