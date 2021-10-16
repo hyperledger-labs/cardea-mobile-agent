@@ -40,7 +40,7 @@ function PendingTasks(props) {
   }
 
   const [displayTasks, setDisplayTasks] = useState(false)
-  const [trustedTraveler, setTrustedTraveler] = useState(false)
+  const [trustedTraveler, setTrustedTraveler] = useState({'hasCredential': false, 'credentialType': 'labResult'})
 
   useEffect(() => {
     console.log('Checking if we should display tasks')
@@ -82,10 +82,10 @@ function PendingTasks(props) {
   //Get trusted traveler availability from storage
   const getTrustedTraveler = async () => {
     const data = await getData('trustedTraveler')
-
-    console.log('Trusted Traveler Action Item display:', data)
-
-    setTrustedTraveler(data)
+    if (data) {
+      console.log('Trusted Traveler Action Item display:', data)
+      setTrustedTraveler(data)
+    }
   }
 
   useEffect(() => {
@@ -117,11 +117,18 @@ function PendingTasks(props) {
     }
   })
 
-  const requestTrustedTraveler = () => {
+  const requestTrustedTraveler = ( credentialType ) => {
     console.log('Requesting Trusted Traveler')
-
-    history.push('/workflow/accepted-test-result')
-  }
+      switch (credentialType) {
+        case 'labResult' : history.push('/workflow/accepted-test-result') 
+        break
+        case 'exemption' : history.push('/workflow/accepted-vaccination-exemption')
+        break
+        case 'vaccination' : history.push('/workflow/accepted-vaccination')
+        break
+        default : console.warn(`Unrecognized Credential Type : ${credentialType}`)
+      }
+    }
 
   const doTask = async (credentialRecord) => {
     console.log('Credential Record', credentialRecord)
@@ -175,11 +182,11 @@ function PendingTasks(props) {
       <View style={AppStyles.flexView}>
         {displayTasks ? (
           <>
-            {trustedTraveler && (
+            {trustedTraveler.hasCredential && (
               <TouchableOpacity
                 style={Styles.itemBox}
                 onPress={() => {
-                  requestTrustedTraveler()
+                  requestTrustedTraveler( trustedTraveler.credentialType )
                 }}>
                 <Text
                   style={[
