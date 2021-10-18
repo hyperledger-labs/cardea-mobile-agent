@@ -173,7 +173,7 @@ function Workflow(props) {
           console.log('Lab Result Credential Issued, pushing to status screen')
 
           //Add trustedTraveler action item
-          await storeData('trustedTraveler', true)
+          await storeData('trustedTraveler' , {'hasCredential' : true, 'credentialType' : 'labResult'})
 
           props.setCredential(indyCred)
           setWorkflow('accepted-test-result')
@@ -181,8 +181,8 @@ function Workflow(props) {
         case Schemas.Vaccination:
           console.log('Health Vaccination Credential Issued, pushing to status screen')
 
-          //TODO: Add trustedTraveler action item
-          //await storeData('trustedTraveler', true)
+          // Add trustedTraveler action item
+          await storeData('trustedTraveler' , {'hasCredential' : true, 'credentialType' : 'vaccination'})
 
           props.setCredential(indyCred)
           setWorkflow('accepted-vaccination')
@@ -190,8 +190,8 @@ function Workflow(props) {
         case Schemas.VaccinationExemption:
           console.log('Health Vaccination Exemption Credential Issued, pushing to status screen')
 
-          //TODO: Add trustedTraveler action item
-          //await storeData('trustedTraveler', true)
+          // Add trustedTraveler action item
+          await storeData('trustedTraveler' , {'hasCredential' : true, 'credentialType' : 'exemption'})
 
           props.setCredential(indyCred)
           setWorkflow('accepted-vaccination-exemption')
