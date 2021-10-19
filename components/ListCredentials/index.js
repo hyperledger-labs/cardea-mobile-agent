@@ -49,9 +49,9 @@ function ListCredentials(props) {
           connection: await getConnectionDataFromID(credential.connectionId),
           id: credential.id,
         }
-        if (credentialConfigs[credentialToDisplay.schemaId]) {
+        if (credentialConfigs[credentialToDisplay.metadata.schemaId]) {
           credentialToDisplay.credentialName =
-            credentialConfigs[credentialToDisplay.schemaId].credentialName
+            credentialConfigs[credentialToDisplay.metadata.schemaId].credentialName
         }
         credentialsForDisplay.push(credentialToDisplay)
       }
@@ -125,7 +125,7 @@ function ListCredentials(props) {
                     ]}>
                     {credential.credentialName
                       ? credential.credentialName
-                      : parseSchema(credential.schemaId)}
+                      : parseSchema(credential.metadata.schemaId)}
                   </Text>
                   <Text style={[{fontSize: 14}, AppStyles.textSecondary]}>
                     {credential.connection.name}

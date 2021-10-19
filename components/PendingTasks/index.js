@@ -130,10 +130,9 @@ function PendingTasks(props) {
     )
 
     props.setConnection(connectionRecord)
-    console.log(credentialRecord.offerMessage.credential_preview)
     const previewAttributes =
-      credentialRecord.offerMessage.credential_preview.attributes
-    console.log(previewAttributes)
+      credentialRecord.offerMessage.credentialPreview.attributes
+    console.log('check attr', previewAttributes)
     let attributes = {}
     for (const index in previewAttributes) {
       attributes[previewAttributes[index].name] = previewAttributes[index].value
