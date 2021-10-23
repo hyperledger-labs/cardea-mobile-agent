@@ -12,7 +12,7 @@ import {
 
 import {useHistory} from 'react-router-native'
 
-import {parseSchema, formatDate} from '../../utils/'
+import {isDateAttr} from '../../utils/'
 
 import {ErrorsContext} from '../Errors/index.js'
 
@@ -28,7 +28,8 @@ function CurrentCredential(props) {
       if (!curr[1]) {
         return null
       }
-      let attr = formatDate(curr[1])
+      let attr = curr[1]
+      if (isDateAttr(curr[0])) { attr = DateTime.fromSeconds(parseInt(curr[1])).toISODate() }
       return (
         <View
           style={[
