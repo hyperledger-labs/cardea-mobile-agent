@@ -24,7 +24,7 @@ import AppStyles from '@assets/styles'
 import Images from '@assets/images.js'
 import Styles from './styles'
 import AgentContext from '../AgentProvider/index.js'
-import {CredentialEventType} from 'aries-framework'
+import {CredentialEventTypes} from '@aries-framework/core'
 import credentialConfigs from '@configs/credentialConfigs.js'
 
 function ListCredentials(props) {
@@ -45,15 +45,13 @@ function ListCredentials(props) {
       console.log('Credential:', credential)
       if (credential.state === 'done') {
         let credentialToDisplay = {
-          ...(await agentContext.agent.credentials.getIndyCredential(
-            credential.credentialId,
-          )),
+          ...(await credential.getCredentialInfo()),
           connection: await getConnectionDataFromID(credential.connectionId),
           id: credential.id,
         }
-        if (credentialConfigs[credentialToDisplay.schemaId]) {
+        if (credentialConfigs[credentialToDisplay.metadata.schemaId]) {
           credentialToDisplay.credentialName =
-            credentialConfigs[credentialToDisplay.schemaId].credentialName
+            credentialConfigs[credentialToDisplay.metadata.schemaId].credentialName
         }
         credentialsForDisplay.push(credentialToDisplay)
       }
@@ -64,14 +62,14 @@ function ListCredentials(props) {
 
   //Get connection data for credential
   const getConnectionDataFromID = async (connectionID) => {
-    const connection = await agentContext.agent.connections.find(connectionID)
+    const connection = await agentContext.agent.connections.getById(connectionID)
     return getConnectionData(connection)
   }
 
   //Event listener
   const handleCredentialStateChange = async (event) => {
     console.info(
-      `Credentials State Change, new state: "${event.credentialRecord.state}"`,
+      `Credentials State Change, new state: "${event.payload.credentialRecord.state}"`,
       event,
     )
     getCredentials()
@@ -86,16 +84,10 @@ function ListCredentials(props) {
   //Event listener registration
   useEffect(() => {
     if (!agentContext.loading) {
-      agentContext.agent.credentials.events.on(
-        CredentialEventType.StateChanged,
+      agentContext.agent.events.on(
+        CredentialEventTypes.CredentialStateChanged,
         handleCredentialStateChange,
       )
-
-      return function cleanup() {
-        agentContext.agent.credentials.events.removeAllListeners(
-          CredentialEventType.StateChanged,
-        )
-      }
     }
   }, [agentContext.loading])
 
@@ -133,7 +125,7 @@ function ListCredentials(props) {
                     ]}>
                     {credential.credentialName
                       ? credential.credentialName
-                      : parseSchema(credential.schemaId)}
+                      : parseSchema(credential.metadata.schemaId)}
                   </Text>
                   <Text style={[{fontSize: 14}, AppStyles.textSecondary]}>
                     {credential.connection.name}

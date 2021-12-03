@@ -24,7 +24,7 @@ function CurrentCredential(props) {
   let history = useHistory()
 
   const mapAttributes = () => {
-    return Object.entries(props.credential.attributes).map((curr, i) => {
+    return Object.entries(props.credential.claims).map((curr, i) => {
       if (!curr[1]) {
         return null
       }
@@ -89,7 +89,7 @@ function CurrentCredential(props) {
                     ]}>
                     {props.credential.credentialName
                       ? props.credential.credentialName
-                      : parseSchema(props.credential.schemaId)}
+                      : parseSchema(props.credential.metadata.schemaId)}
                   </Text>
                   <Text
                     style={[

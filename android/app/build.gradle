@@ -22,7 +22,7 @@ import groovy.swing.SwingBuilder
  *   // default. Can be overridden with ENTRY_FILE environment variable.
  *   entryFile: "index.android.js",
  *
- *   // https://facebook.github.io/react-native/docs/performance#enable-the-ram-format
+ *   // https://reactnative.dev/docs/performance#enable-the-ram-format
  *   bundleCommand: "ram-bundle",
  *
  *   // whether to bundle JS and assets in debug mode
@@ -80,8 +80,7 @@ import groovy.swing.SwingBuilder
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
-    entryFile: "index.js",
+    enableHermes: true,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -94,7 +93,7 @@ apply from: "../../node_modules/react-native/react.gradle"
  * Upload all the APKs to the Play Store and people will download
  * the correct one based on the CPU architecture of their device.
  */
-def enableSeparateBuildPerCPUArchitecture = true
+def enableSeparateBuildPerCPUArchitecture = false
 
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
@@ -132,6 +131,8 @@ project.ext.envConfigFiles = [
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 android {
+    ndkVersion rootProject.ext.ndkVersion
+
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     compileOptions {
@@ -158,7 +159,7 @@ android {
             enable enableSeparateBuildPerCPUArchitecture
 
             universalApk true  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86", "arm64-v8a"/*, "x86_64"*/ //TODO(JamesKEbert): add x86_64 support from libindy
+            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64" //TODO(JamesKEbert): add x86_64 support from libindy
         }
     }
     signingConfigs {
@@ -221,18 +222,14 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // https://developer.android.com/studio/build/configure-apk-splits.html
-            def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3/*, "x86_64": 4*/]
+            def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
-                        versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+                        defaultConfig.versionCode * 1000 + versionCodes.get(abi)
             }
 
         }
-    }
-
-    lintOptions {
-        abortOnError false
     }
 }
 
@@ -241,6 +238,17 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation 'net.java.dev.jna:jna:5.2.0'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
+      exclude group:'com.facebook.fbjni'
+    }
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
+        exclude group:'com.facebook.flipper'
+        exclude group:'com.squareup.okhttp3', module:'okhttp'
+    }
+    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
+        exclude group:'com.facebook.flipper'
+    }
 
     implementation 'com.android.support:multidex:1.0.3'
 

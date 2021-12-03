@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react'
 import Config from 'react-native-config'
+import { DateTime } from 'luxon'
 import {Text, TouchableOpacity, View} from 'react-native'
 import {useHistory} from 'react-router-native'
 import AppHeaderLarge from '../../AppHeaderLarge/index.js'
@@ -9,13 +10,13 @@ import AppStyles from '@assets/styles'
 import AgentContext from '../../AgentProvider/index.js'
 import {storeData} from '../../../utils/storage'
 import {
-  ConnectionEventType,
+  ConnectionEventTypes,
+  ConnectionInvitationMessage,
   ConnectionState,
-  decodeInvitationFromUrl,
-  ProofEventType,
+  ProofEventTypes,
   ProofState,
   RequestedCredentials,
-} from 'aries-framework'
+} from '@aries-framework/core'
 
 function ConnectNow(props) {
   //Reference to the agent context
@@ -31,21 +32,23 @@ function ConnectNow(props) {
 
   const proofsEventHandler = async (event) => {
     console.log('- - - - EVENT: ', event)
-    switch (event.proofRecord.state) {
+    switch (event.payload.proofRecord.state) {
       case ProofState.RequestReceived:
         try {
           console.log(
             'Proof Request Message:',
-            event.proofRecord.requestMessage,
+            event.payload.proofRecord.requestMessage,
           )
           console.log(
             'Proof Request:',
-            event.proofRecord.requestMessage.indyProofRequest,
+            event.payload.proofRecord.requestMessage.indyProofRequest,
           )
 
-          let DOB = new Date(
-            `${props.setupData.PassportData.dob.month}/${props.setupData.PassportData.dob.day}/${props.setupData.PassportData.dob.year}`,
-          )
+          let DOB = DateTime.fromObject({
+            day: props.setupData.PassportData.dob.day, 
+            month: props.setupData.PassportData.dob.month, 
+            year: props.setupData.PassportData.dob.year
+          })
 
           // Using JSON.stringify to pass nested object to requested credential, can be refined
 
@@ -64,7 +67,7 @@ function ConnectNow(props) {
             surname: props.setupData.PassportData.names.lastName,
             given_names: props.setupData.PassportData.names.names.join(' '),
             sex: props.setupData.PassportData.sex.full,
-            date_of_birth: DOB.toISOString(),
+            date_of_birth: DOB.toISO({includeOffset: false}),
             place_of_birth: '',
             nationality: '',
             date_of_issue: '',
@@ -87,7 +90,7 @@ function ConnectNow(props) {
 
           //Check to see if self attested user data would fufill this request
           let requestedAttributes = Object.keys(
-            event.proofRecord.requestMessage.indyProofRequest.requestedAttributes,
+            event.payload.proofRecord.requestMessage.indyProofRequest.requestedAttributes,
           )
 
           //Determine if user data is sufficient for proof request
@@ -99,7 +102,7 @@ function ConnectNow(props) {
             setVerifiable(false)
           }
 
-          setProofId(event.proofRecord.id)
+          setProofId(event.payload.proofRecord.id)
 
           setLoadingOverlayVisible(false)
           console.log("Compiled requested Credentials")
@@ -118,10 +121,11 @@ function ConnectNow(props) {
 
   const connectionEventHandler = async (event) => {
     console.log('Connection Event', event)
+    console.log('connection record: ', event.payload.connectionRecord)
 
     if (
-      event.connectionRecord.id === connectionId &&
-      event.connectionRecord.state === ConnectionState.Complete
+      event.payload.connectionRecord.id === connectionId &&
+      event.payload.connectionRecord.state === ConnectionState.Complete
     ) {
       try {
         console.log('Connected to government agent')
@@ -147,21 +151,21 @@ function ConnectNow(props) {
 
   useEffect(() => {
     if (!agentContext.loading) {
-      agentContext.agent.connections.events.on(
-        ConnectionEventType.StateChanged,
+      agentContext.agent.events.on(
+        ConnectionEventTypes.ConnectionStateChanged,
         connectionEventHandler,
       )
-      agentContext.agent.proofs.events.on(
-        ProofEventType.StateChanged,
+      agentContext.agent.events.on(
+        ProofEventTypes.ProofStateChanged,
         proofsEventHandler,
       )
       return function () {
-        agentContext.agent.connections.events.removeListener(
-          ConnectionEventType.StateChanged,
+        agentContext.agent.events.off(
+          ConnectionEventTypes.ConnectionStateChanged,
           connectionEventHandler,
         )
-        agentContext.agent.proofs.events.removeListener(
-          ProofEventType.StateChanged,
+        agentContext.agent.events.off(
+          ProofEventTypes.ProofStateChanged,
           proofsEventHandler,
         )
       }
@@ -178,7 +182,7 @@ function ConnectNow(props) {
 
   const connect = async () => {
     console.log('Invitation:', Config.GOVERNMENT_INVITATION)
-    const invitationRecord = await decodeInvitationFromUrl(
+    const invitationRecord = await ConnectionInvitationMessage.fromUrl(
       Config.GOVERNMENT_INVITATION,
     )
 

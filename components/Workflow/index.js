@@ -31,17 +31,17 @@ import {getData, storeData} from '../../utils/storage'
 import AgentContext from '../AgentProvider/'
 
 import {
-  ConnectionEventType,
-  CredentialEventType,
-  ProofEventType,
-  BasicMessageEventType,
+  ConnectionEventTypes,
+  CredentialEventTypes,
+  ProofEventTypes,
+  BasicMessageEventTypes,
   ConnectionState,
   CredentialState,
   ProofState,
   JsonTransformer,
   PresentationMessage,
   RequestedCredentials,
-} from 'aries-framework'
+} from '@aries-framework/core'
 
 import CredentialOffered from './Credential/Offered/index.js'
 import CredentialRequested from './Credential/Requested/index.js'
@@ -76,7 +76,7 @@ function Workflow(props) {
 
   //Get connection data for credential
   const getConnectionDataFromID = async (connectionID) => {
-    const connection = await agentContext.agent.connections.find(connectionID)
+    const connection = await agentContext.agent.connections.getById(connectionID)
     return getConnectionData(connection)
   }
 
@@ -91,24 +91,24 @@ function Workflow(props) {
   //Credential Event Callback
   const handleCredentialStateChange = async (event) => {
     console.info(
-      `Credentials State Change, new state: "${event.credentialRecord.state}"`,
+      `Credentials State Change, new state: "${event.payload.credentialRecord.state}"`,
       event,
     )
 
-    switch (event.credentialRecord.state) {
+    switch (event.payload.credentialRecord.state) {
     case CredentialState.OfferReceived:
       console.log(
         'IndyCredentialOffer:',
-        event.credentialRecord.offerMessage.indyCredentialOffer,
+        event.payload.credentialRecord.offerMessage.indyCredentialOffer,
       )
       const connectionRecord = await agentContext.agent.connections.getById(
-        event.credentialRecord.connectionId,
+        event.payload.credentialRecord.connectionId,
       )
 
       props.setConnection(connectionRecord)
 
       const previewAttributes =
-        event.credentialRecord.offerMessage.credentialPreview.attributes
+        event.payload.credentialRecord.offerMessage.credentialPreview.attributes
 
       let attributes = {}
       for (const index in previewAttributes) {
@@ -118,15 +118,15 @@ function Workflow(props) {
 
       let credentialToDisplay = {
         attributes,
-        connectionId: event.credentialRecord.connectionId,
-        id: event.credentialRecord.id,
+        connectionId: event.payload.credentialRecord.connectionId,
+        id: event.payload.credentialRecord.id,
         connection: await getConnectionDataFromID(
-          event.credentialRecord.connectionId,
+          event.payload.credentialRecord.connectionId,
         ),
-        fullRecord: event.credentialRecord,
+        fullRecord: event.payload.credentialRecord,
         full: event,
         schemaId:
-          event.credentialRecord.offerMessage.indyCredentialOffer.schema_id,
+          event.payload.credentialRecord.offerMessage.indyCredentialOffer.schema_id,
       }
       //Display Credential Name if schema id is configurated
       if (credentialConfigs[credentialToDisplay.schemaId]) {
@@ -161,12 +161,10 @@ function Workflow(props) {
       console.log('attempting to send ack')
 
       await agentContext.agent.credentials.acceptCredential(
-        event.credentialRecord.id,
+        event.payload.credentialRecord.id,
       )
 
-      const indyCred = await agentContext.agent.credentials.getIndyCredential(
-        event.credentialRecord.credentialId,
-      )
+      const indyCred = await event.payload.credentialRecord.getCredentialInfo()
       console.log('IndyCred', indyCred)
       switch (indyCred.schemaId) {
         case Schemas.LabResult:
@@ -219,11 +217,11 @@ function Workflow(props) {
 
     var presentationMessage
 
-    switch (event.proofRecord.state) {
+    switch (event.payload.proofRecord.state) {
       case ProofState.RequestReceived:
         //Get Verifier Connection Record
         const connectionRecord = await agentContext.agent.connections.getById(
-          event.proofRecord.connectionId,
+          event.payload.proofRecord.connectionId,
         )
 
         props.setConnection(connectionRecord)
@@ -232,13 +230,13 @@ function Workflow(props) {
         try {
           console.log(
             'Proof Request Message:',
-            event.proofRecord.requestMessage,
+            event.payload.proofRecord.requestMessage,
             '\nProof Request:',
-            event.proofRecord.requestMessage.indyProofRequest,
+            event.payload.proofRecord.requestMessage.indyProofRequest,
           )
 
           const requestedCredentials = await agentContext.agent.proofs.getRequestedCredentialsForProofRequest(
-            event.proofRecord.requestMessage.indyProofRequest,
+            event.payload.proofRecord.requestMessage.indyProofRequest,
             undefined,
           )
           console.log('Retrieved Requested Credentials: ', requestedCredentials)
@@ -248,7 +246,7 @@ function Workflow(props) {
           let schemas = new Set()
           let credDefIds = new Set()
           let attributes = Object.entries(
-            event.proofRecord.requestMessage.indyProofRequest
+            event.payload.proofRecord.requestMessage.indyProofRequest
               .requestedAttributes,
           )
           for (const [key, value] of attributes) {
@@ -277,7 +275,7 @@ function Workflow(props) {
                     'Request is for a Trusted Traveler, sending proof automatically',
                   )
                   await agentContext.agent.proofs.acceptRequest(
-                    event.proofRecord.id,
+                    event.payload.proofRecord.id,
                     requestedCredentials,
                   )
                   return
@@ -293,7 +291,7 @@ function Workflow(props) {
                   'Request is required to get a Trusted Traveler, sending automatically',
                 )
                 await agentContext.agent.proofs.acceptRequest(
-                  event.proofRecord.id,
+                  event.payload.proofRecord.id,
                   requestedCredentials,
                 )
                 return
@@ -302,12 +300,12 @@ function Workflow(props) {
 
           //Set information for generic presentation request screen
           const connectionRecord = await agentContext.agent.connections.getById(
-            event.proofRecord.connectionId,
+            event.payload.proofRecord.connectionId,
           )
           props.setConnection(connectionRecord)
 
           setRequestedCredentials(requestedCredentials)
-          setProofRecord(event.proofRecord)
+          setProofRecord(event.payload.proofRecord)
           setWorkflow('requested')
 
           return
@@ -325,7 +323,7 @@ function Workflow(props) {
           })
 
           let requestedAttributes = Object.keys(
-            event.proofRecord.requestMessage.indyProofRequest.requestedAttributes,
+            event.payload.proofRecord.requestMessage.indyProofRequest.requestedAttributes,
           )
 
           //Determine if user data is sufficient for proof request
@@ -335,7 +333,7 @@ function Workflow(props) {
 
           if(sufficientData){
             setRequestedCredentials(requestedCredentials)
-            setProofId(event.proofRecord.id)
+            setProofId(event.payload.proofRecord.id)
             setWorkflow('senddata')
 
             return
@@ -357,12 +355,12 @@ function Workflow(props) {
         console.log('Presentation Sent')
 
         presentationMessage = JsonTransformer.fromJSON(
-          event.proofRecord.presentationMessage,
+          event.payload.proofRecord.presentationMessage,
           PresentationMessage,
         )
         console.log(
           'Indy Proof',
-          event.proofRecord.presentationMessage.indyProof,
+          event.payload.proofRecord.presentationMessage.indyProof,
           presentationMessage,
           presentationMessage.indyProof,
         )
@@ -389,15 +387,17 @@ function Workflow(props) {
         console.log('Presentation complete')
 
         presentationMessage = JsonTransformer.fromJSON(
-          event.proofRecord.presentationMessage,
+          event.payload.proofRecord.presentationMessage,
           PresentationMessage,
         )
         console.log(
           'Indy Proof',
-          event.proofRecord.presentationMessage.indyProof,
+          event.payload.proofRecord.presentationMessage.indyProof,
           presentationMessage,
           presentationMessage.indyProof,
         )
+
+        if(event.payload.proofRecord.presentationMessage.indyProof.identifiers.length > 0) {
         console.log(presentationMessage.indyProof.identifiers[0].schema_id)
 
         switch (presentationMessage.indyProof.identifiers[0].schema_id) {
@@ -414,6 +414,7 @@ function Workflow(props) {
         }
 
         break
+        }
     }
   }
 
@@ -606,7 +607,7 @@ function Workflow(props) {
     console.log('Received Basic Message Event', event)
 
     //TODO: Replace the following with present-proof v2 functionality
-    switch (event.message.content) {
+    switch (event.payload.message.content) {
       case 'UNVERIFIED':
         console.log('Received Presentation Unverified')
         setWorkflow('unverified')
@@ -618,20 +619,21 @@ function Workflow(props) {
 
         break
       default:
-        console.log(`New Basic Message: '${event.message.content}'`)
+        console.log(`New Basic Message: '${event.payload.message.content}'`)
         break
     }
   }
 
   //Genereate new invitation
   const generateInvitation = async () => {
-    const invitation = await agentContext.agent.connections.createConnection(
-      true,
-      'Cardea Mobile Holder',
-    )
-    const url = invitation.invitation.toUrl(
-      agentContext.agent.agentConfig.mediatorUrl,
-    )
+    const invitation = await agentContext.agent.connections.createConnection({
+      autoAcceptConnection: true,
+      alias: 'Cardea Mobile Holder',
+    })
+    const url = invitation.invitation.toUrl({
+      domain:
+        agentContext.agent.agentConfig.mediatorConnectionsInvite.split('?')[0],
+    })
     console.log('New invitation url:', url)
     setInvitationConnection(invitation)
   }
@@ -648,9 +650,9 @@ function Workflow(props) {
       )
 
       if (
-        event.connectionRecord.id ===
+        event.payload.connectionRecord.id ===
           invitationConnection.connectionRecord.id &&
-        event.connectionRecord.state === 'complete'
+        event.payload.connectionRecord.state === 'complete'
       ) {
         generateInvitation()
       }
@@ -659,31 +661,31 @@ function Workflow(props) {
 
   useEffect(() => {
     if (!agentContext.loading) {
-      agentContext.agent.credentials.events.on(
-        CredentialEventType.StateChanged,
+      agentContext.agent.events.on(
+        CredentialEventTypes.CredentialStateChanged,
         handleCredentialStateChange,
       )
-      agentContext.agent.proofs.events.on(
-        ProofEventType.StateChanged,
+      agentContext.agent.events.on(
+        ProofEventTypes.ProofStateChanged,
         handlePresentationStateChange,
       )
-      agentContext.agent.basicMessages.events.on(
-        BasicMessageEventType.MessageReceived,
+      agentContext.agent.events.on(
+        BasicMessageEventTypes.BasicMessageReceived,
         handleBasicMessage,
       )
       generateInvitation()
 
       return function () {
-        agentContext.agent.credentials.events.removeListener(
-          CredentialEventType.StateChanged,
+        agentContext.agent.events.off(
+          CredentialEventTypes.CredentialStateChanged,
           handleCredentialStateChange,
         )
-        agentContext.agent.proofs.events.removeListener(
-          ProofEventType.StateChanged,
+        agentContext.agent.events.off(
+          ProofEventTypes.ProofStateChanged,
           handlePresentationStateChange,
         )
-        agentContext.agent.basicMessages.events.removeListener(
-          BasicMessageEventType.MessageReceived,
+        agentContext.agent.events.off(
+          BasicMessageEventTypes.BasicMessageReceived,
           handleBasicMessage,
         )
       }
@@ -692,14 +694,14 @@ function Workflow(props) {
 
   //Invitation connection event listeners
   useEffect(() => {
-    agentContext.agent.connections.events.on(
-      ConnectionEventType.StateChanged,
+    agentContext.agent.events.on(
+      ConnectionEventTypes.ConnectionStateChanged,
       handleConnectionsUpdate,
     )
 
     return function () {
-      agentContext.agent.connections.events.removeListener(
-        ConnectionEventType.StateChanged,
+      agentContext.agent.events.off(
+        ConnectionEventTypes.ConnectionStateChanged,
         handleConnectionsUpdate,
       )
     }

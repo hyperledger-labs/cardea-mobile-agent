@@ -108,7 +108,7 @@ function CredentialOffered(props) {
                   {/*Temporary hardcoding*/}
                   {props.credential.credentialName
                     ? props.credential.credentialName
-                    : parseSchema(props.credential.schemaId)}
+                    : parseSchema(props.credential.metadata.schemaId)}
                 </Text>
               </View>
               <TouchableOpacity

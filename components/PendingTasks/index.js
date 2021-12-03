@@ -12,11 +12,11 @@ import {
 
 import {useHistory} from 'react-router-native'
 import {
-  CredentialEventType,
+  CredentialEventTypes,
   CredentialState,
   JsonTransformer,
   OfferCredentialMessage,
-} from 'aries-framework'
+} from '@aries-framework/core'
 
 import AgentContext from '../AgentProvider/'
 import Images from '@assets/images'
@@ -35,7 +35,7 @@ function PendingTasks(props) {
 
   //Get connection data for credential
   const getConnectionDataFromID = async (connectionID) => {
-    const connection = await agentContext.agent.connections.find(connectionID)
+    const connection = await agentContext.agent.connections.getById(connectionID)
     return getConnectionData(connection)
   }
 
@@ -103,14 +103,14 @@ function PendingTasks(props) {
 
   useEffect(() => {
     if (!agentContext.loading) {
-      agentContext.agent.credentials.events.on(
-        CredentialEventType.StateChanged,
+      agentContext.agent.events.on(
+        CredentialEventTypes.CredentialStateChanged,
         handleCredentialStateChange,
       )
 
       return function () {
-        agentContext.agent.credentials.events.removeListener(
-          CredentialEventType.StateChanged,
+        agentContext.agent.events.off(
+          CredentialEventTypes.CredentialStateChanged,
           handleCredentialStateChange,
         )
       }
@@ -137,10 +137,9 @@ function PendingTasks(props) {
     )
 
     props.setConnection(connectionRecord)
-    console.log(credentialRecord.offerMessage.credential_preview)
     const previewAttributes =
-      credentialRecord.offerMessage.credential_preview.attributes
-    console.log(previewAttributes)
+      credentialRecord.offerMessage.credentialPreview.attributes
+    console.log('check attr', previewAttributes)
     let attributes = {}
     for (const index in previewAttributes) {
       attributes[previewAttributes[index].name] = previewAttributes[index].value

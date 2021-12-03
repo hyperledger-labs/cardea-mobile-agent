@@ -69,14 +69,12 @@ function CredentialRequested(props) {
         if (!credentialIds.includes(curr[1].credentialId)) {
           credentialIds.push(curr[1].credentialId)
           let credentialToDisplay = {
-            ...(await agentContext.agent.credentials.getIndyCredential(
-              curr[1].credentialId,
-            )),
+            ...(await curr[1].getCredentialInfo()),
             credentialId: curr[1].credentialId,
           }
-          if (credentialConfigs[credentialToDisplay.schemaId]) {
+          if (credentialConfigs[credentialToDisplay.metadata.schemaId]) {
             credentialToDisplay.credentialName =
-              credentialConfigs[credentialToDisplay.schemaId].credentialName
+              credentialConfigs[credentialToDisplay.metadata.schemaId].credentialName
           }
           obj = credentialToDisplay
           credentialsToDisplay.push(credentialToDisplay)
@@ -84,7 +82,7 @@ function CredentialRequested(props) {
             ...newCredLabels,
             credentialToDisplay.credentialName
               ? credentialToDisplay.credentialName
-              : parseSchema(credentialToDisplay.schemaId),
+              : parseSchema(credentialToDisplay.metadata.schemaId),
           ])
         }
 

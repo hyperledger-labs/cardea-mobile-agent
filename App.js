@@ -10,9 +10,11 @@ import React, {useEffect, useState} from 'react'
 import {View} from 'react-native'
 import {Redirect, Route} from 'react-router-native'
 
+import 'react-native-get-random-values'
+import '@azure/core-asynciterator-polyfill'
+
 import * as Keychain from 'react-native-keychain'
 import AsyncStorage from '@react-native-community/async-storage'
-import 'react-native-get-random-values'
 import {AgentProvider} from './components/AgentProvider/'
 import Errors from './components/Errors/index.js'
 import Notifications from './components/Notifications/index.js'
