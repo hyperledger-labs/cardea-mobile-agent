@@ -1,7 +1,13 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, TextInput as RNTextInput, TextInputProps } from 'react-native'
+import React, {useState} from 'react'
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput as RNTextInput,
+  TextInputProps,
+} from 'react-native'
 
-import { Colors, TextTheme, borderRadius } from '../../theme'
+import {Colors, TextTheme, borderRadius} from '../../theme'
 
 interface Props extends TextInputProps {
   label: string
@@ -22,18 +28,18 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     color: Colors.text,
     borderWidth: 2,
-    borderColor: Colors.transparent,
+    borderColor: Colors.offWhite,
   },
 })
 
-const TextInput: React.FC<Props> = ({ label, ...textInputProps }) => {
+const TextInput: React.FC<Props> = ({label, ...textInputProps}) => {
   const [focused, setFocused] = useState(false)
 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
       <RNTextInput
-        style={[styles.textInput, focused && { borderColor: Colors.primary }]}
+        style={[styles.textInput, focused && {borderColor: Colors.primary}]}
         selectionColor={Colors.primary}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}

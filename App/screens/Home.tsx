@@ -1,12 +1,20 @@
-import { CredentialState, ProofState } from '@aries-framework/core'
-import { useCredentialByState, useProofByState } from '@aries-framework/react-hooks'
+import {CredentialState, ProofState} from '@aries-framework/core'
+import {
+  useCredentialByState,
+  useProofByState,
+} from '@aries-framework/react-hooks'
 import React from 'react'
-import { useTranslation } from 'react-i18next'
-import { FlatList, StyleSheet, View } from 'react-native'
+import {useTranslation} from 'react-i18next'
+import {FlatList, StyleSheet, View} from 'react-native'
 
-import { Colors } from '../theme'
+import {Colors} from '../theme'
 
-import { ModularView, NotificationCredentialListItem, NotificationProofListItem, Text } from 'components'
+import {
+  ModularView,
+  NotificationCredentialListItem,
+  NotificationProofListItem,
+  Text,
+} from 'components'
 
 const styles = StyleSheet.create({
   container: {
@@ -18,7 +26,7 @@ const styles = StyleSheet.create({
 const Home: React.FC = () => {
   const credentials = useCredentialByState(CredentialState.OfferReceived)
   const proofs = useProofByState(ProofState.RequestReceived)
-  const { t } = useTranslation()
+  const {t} = useTranslation()
 
   return (
     <View style={styles.container}>
@@ -28,7 +36,7 @@ const Home: React.FC = () => {
           <FlatList
             data={[...credentials, ...proofs]}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) =>
+            renderItem={({item}) =>
               item.type === 'CredentialRecord' ? (
                 <NotificationCredentialListItem notification={item} />
               ) : (

@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import {StyleSheet} from 'react-native'
 
 type BaseColor = Record<string, string>
 
@@ -15,10 +15,13 @@ export const BaseColors: BaseColor = {
   darkGreen: '#35823F',
   darkGreenLightTransparent: `rgba(53, 130, 63, ${heavyOpacity})`,
   darkGreenHeavyTransparent: `rgba(53, 130, 63, ${lightOpacity})`,
+  darkOrange: '#FAA220',
+  darkOrangeLightTransparent: `rgba(250, 162, 32, ${heavyOpacity})`,
+  darkOrangeHeavyTransparent: `rgba(250, 162, 32, ${lightOpacity})`,
   darkGrey: '#1C1C1E',
   darkGreyAlt: '#313132',
   green: '#2D6E35',
-  lightBlue: '#D9EAF7',
+  lightBlue: '#759ECD',
   lightGrey: '#D3D3D3',
   lightGreyAlt: '#F2F2F2',
   mediumBlue: '#B9CEDE',
@@ -49,7 +52,18 @@ interface ColorTheme extends BaseColor {
 
 interface FontAttributes {
   fontSize: number
-  fontWeight: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'
+  fontWeight:
+    | 'normal'
+    | 'bold'
+    | '100'
+    | '200'
+    | '300'
+    | '400'
+    | '500'
+    | '600'
+    | '700'
+    | '800'
+    | '900'
   color: string
 }
 
@@ -98,48 +112,48 @@ interface TextBoxTheme {
 }
 
 export const Colors: ColorTheme = {
-  accent: BaseColors.yellow,
-  background: BaseColors.black,
-  backgroundLight: BaseColors.lightGreen,
-  borderLight: BaseColors.mediumGreen,
-  primary: BaseColors.darkGreen,
-  primaryActive: BaseColors.darkGreenHeavyTransparent,
+  accent: BaseColors.lightBlue,
+  background: BaseColors.white,
+  backgroundLight: BaseColors.lightGrey,
+  borderLight: BaseColors.darkOrangeLightTransparent,
+  primary: BaseColors.darkOrange,
+  primaryActive: BaseColors.darkOrangeHeavyTransparent,
   shadow: BaseColors.darkGrey,
-  text: BaseColors.white,
+  text: BaseColors.black,
   ...BaseColors,
   ...StatusColors,
 }
 
 export const CredentialTheme: CredentialTheme = {
-  background: Colors.shadow,
+  background: Colors.offWhite,
 }
 
 export const CredentialOfferTheme: CredentialOfferTheme = {
-  background: Colors.black,
+  background: Colors.lightGrey,
 }
 
 export const ContactTheme: ContactTheme = {
-  background: Colors.shadow,
+  background: Colors.offWhite,
 }
 
 export const ModularViewTheme: ModularViewTheme = {
-  background: Colors.shadow,
+  background: Colors.offWhite,
 }
 
 export const ProofRequestTheme: ProofRequestTheme = {
-  background: Colors.black,
+  background: Colors.lightGrey,
 }
 
 export const SettingsTheme: SettingsTheme = {
-  background: Colors.shadow,
+  background: Colors.offWhite,
 }
 
 export const SingleSelectBlockTheme: SingleSelectBlockTheme = {
-  background: Colors.shadow,
+  background: Colors.offWhite,
 }
 
 export const TextBoxTheme: TextBoxTheme = {
-  background: Colors.darkGreenLightTransparent,
+  background: Colors.darkOrangeLightTransparent,
   border: Colors.borderLight,
   text: Colors.text,
 }
@@ -191,7 +205,7 @@ export const Buttons = StyleSheet.create({
   primaryDisabled: {
     padding: 16,
     borderRadius: 4,
-    backgroundColor: Colors.darkGreenHeavyTransparent,
+    backgroundColor: Colors.darkOrangeHeavyTransparent,
   },
   primaryText: {
     ...TextTheme.normal,
@@ -216,19 +230,19 @@ export const Buttons = StyleSheet.create({
     padding: 16,
     borderRadius: 4,
     borderWidth: 2,
-    borderColor: Colors.darkGreenLightTransparent,
+    borderColor: Colors.darkOrangeLightTransparent,
     backgroundColor: Colors.white,
   },
   secondaryText: {
     ...TextTheme.normal,
     fontWeight: 'bold',
-    color: Colors.primary,
+    color: Colors.blue,
     textAlign: 'center',
   },
   secondaryTextDisabled: {
     ...TextTheme.normal,
     fontWeight: 'bold',
-    color: Colors.darkGreenLightTransparent,
+    color: Colors.lightBlue,
     textAlign: 'center',
   },
 })
