@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-
-npm run style-check
-CI=true npm run test
