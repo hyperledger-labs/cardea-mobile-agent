@@ -1,6 +1,6 @@
 {
   "name": "cardeaholder",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "scripts": {
     "style-check": "npm run prettier -- --check",
     "style-format": "npm run prettier -- --write",
