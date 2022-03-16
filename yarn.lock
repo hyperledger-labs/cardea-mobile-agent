@@ -9,10 +9,35 @@
   dependencies:
     "@jridgewell/trace-mapping" "^0.3.0"
 
-"@aries-framework/core@0.1.0", "@aries-framework/core@^0.1.0-alpha.322":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@aries-framework/core/-/core-0.1.0.tgz#704e349be6df42bff9c177438b08c03acb8e1611"
-  integrity sha512-NwlPgDKh7f6N0wVB6SvDh7Vr2nZJKGR4+v+8OJCB/Wx7sIAfL8MyLCMEhxkdRF+uIB1QjTzHQ2k9ID0K/NNQQQ==
+"@aries-framework/core@0.1.0-alpha.276+74f3d0a":
+  version "0.1.0-alpha.276"
+  resolved "https://registry.yarnpkg.com/@aries-framework/core/-/core-0.1.0-alpha.276.tgz#5012691bf5a278c01177a2f2676be5e3ff827691"
+  integrity sha512-pmYuOwWQTvfLZfVazFi7Vtd9KOPPNhaNKCMpYD+9VXleoVviF0ERVzs5ScPWVS0CthKN0digFvQeTmZ6Q4tOWg==
+  dependencies:
+    "@types/indy-sdk" "^1.16.6"
+    "@types/node-fetch" "^2.5.10"
+    "@types/ws" "^7.4.4"
+    abort-controller "^3.0.0"
+    bn.js "^5.2.0"
+    borc "^3.0.0"
+    buffer "^6.0.3"
+    class-transformer "^0.4.0"
+    class-validator "^0.13.1"
+    js-sha256 "^0.9.0"
+    luxon "^1.27.0"
+    make-error "^1.3.6"
+    multibase "^4.0.4"
+    multihashes "^4.0.2"
+    object-inspect "^1.10.3"
+    query-string "^7.0.1"
+    reflect-metadata "^0.1.13"
+    rxjs "^7.1.0"
+    tsyringe "^4.5.0"
+    uuid "^8.3.2"
+
+"@aries-framework/core@file:aries-framework-core-v0.1.0-alpha.289-cardeaasyncledger.0.tgz":
+  version "0.1.0-alpha.289-cardeaasyncledger.0"
+  resolved "file:aries-framework-core-v0.1.0-alpha.289-cardeaasyncledger.0.tgz#7fd4b6ab53f769b655cfae69f720a09ab77f721a"
   dependencies:
     "@multiformats/base-x" "^4.0.1"
     "@types/indy-sdk" "^1.16.6"
@@ -22,8 +47,8 @@
     bn.js "^5.2.0"
     borc "^3.0.0"
     buffer "^6.0.3"
-    class-transformer "0.5.1"
-    class-validator "0.13.1"
+    class-transformer "^0.4.0"
+    class-validator "^0.13.1"
     js-sha256 "^0.9.0"
     lru_map "^0.4.1"
     luxon "^1.27.0"
@@ -42,12 +67,12 @@
   resolved "https://registry.yarnpkg.com/@aries-framework/react-hooks/-/react-hooks-0.1.4.tgz#2e02edd428e23b0f10f46a49ff76bbe90f2d5e5f"
   integrity sha512-A+i0e4qsTQ0koJDgeqBFCmuXb0I92p4K2mEr6hcRSKwA4pp7XqBeB73bV5Kj2HooV2rmEd7yDDoUfUc0lC7+Zw==
 
-"@aries-framework/react-native@^0.1.0-alpha.322":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@aries-framework/react-native/-/react-native-0.1.0.tgz#68d81b84e10d3d7d3bcf210763eadd171dce3fe8"
-  integrity sha512-dy6zdXjqaECjRKn16jiCfaoKq7ihSrNMF2edj3IPnfAIYaPgUr8j9vexLU7HAOWTER7c5NdxRWisikeglLqefA==
+"@aries-framework/react-native@0.1.0-alpha.276":
+  version "0.1.0-alpha.276"
+  resolved "https://registry.yarnpkg.com/@aries-framework/react-native/-/react-native-0.1.0-alpha.276.tgz#57d83277857f9a85ec385b997b72dda85067ed3c"
+  integrity sha512-UFvIBK5jxPoGjfhn22g23e3eKaAVX7PNUlCH5Sl3UiMfY0PN2TgIwMWkECdscyqyLvlkdKAZf/N+oOgXIi+TcA==
   dependencies:
-    "@aries-framework/core" "0.1.0"
+    "@aries-framework/core" "0.1.0-alpha.276+74f3d0a"
     "@azure/core-asynciterator-polyfill" "^1.0.0"
     events "^3.3.0"
 
@@ -1937,11 +1962,6 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
 
-"@types/validator@^13.1.3":
-  version "13.7.1"
-  resolved "https://registry.yarnpkg.com/@types/validator/-/validator-13.7.1.tgz#cdab1b4779f6b1718a08de89d92d2603b71950cb"
-  integrity sha512-I6OUIZ5cYRk5lp14xSOAiXjWrfVoMZVjDuevBYgQDYzZIjsf2CAISpEcXOkFAtpAHbmWIDLcZObejqny/9xq5Q==
-
 "@types/ws@^7.4.4":
   version "7.4.7"
   resolved "https://registry.yarnpkg.com/@types/ws/-/ws-7.4.7.tgz#f7c390a36f7a0679aa69de2d501319f4f8d9b702"
@@ -2864,10 +2884,10 @@ cjs-module-lexer@^1.0.0:
   resolved "https://registry.yarnpkg.com/cjs-module-lexer/-/cjs-module-lexer-1.2.2.tgz#9f84ba3244a512f3a54e5277e8eef4c489864e40"
   integrity sha512-cOU9usZw8/dXIXKtwa8pM0OTJQuJkxMN6w30csNRUerHfeQ5R6U3kkU/FtJeIf3M202OHfY2U8ccInBG7/xogA==
 
-class-transformer@0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/class-transformer/-/class-transformer-0.5.1.tgz#24147d5dffd2a6cea930a3250a677addf96ab336"
-  integrity sha512-SQa1Ws6hUbfC98vKGxZH3KFY0Y1lm5Zm0SY8XX9zbK7FJCyVEac3ATW0RIpwzW+oOfmHE5PMPufDG9hCfoEOMw==
+class-transformer@^0.4.0:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/class-transformer/-/class-transformer-0.4.1.tgz#eb86449fb5dc8333acbf880c96214acfa0d8dedf"
+  integrity sha512-mbBtth1BFa+pN2fmx6/NmMNxxyu9Mw9rx3rzKWBH7yoG+bfSoJOnEJ3qmB6yEKvoO502zUxSV2AqN7EUypC2Tg==
 
 class-utils@^0.3.5:
   version "0.3.6"
@@ -2879,14 +2899,13 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-class-validator@0.13.1:
-  version "0.13.1"
-  resolved "https://registry.yarnpkg.com/class-validator/-/class-validator-0.13.1.tgz#381b2001ee6b9e05afd133671fbdf760da7dec67"
-  integrity sha512-zWIeYFhUitvAHBwNhDdCRK09hWx+P0HUwFE8US8/CxFpMVzkUK8RJl7yOIE+BVu2lxyPNgeOaFv78tLE47jBIg==
+class-validator@^0.13.1:
+  version "0.13.2"
+  resolved "https://registry.yarnpkg.com/class-validator/-/class-validator-0.13.2.tgz#64b031e9f3f81a1e1dcd04a5d604734608b24143"
+  integrity sha512-yBUcQy07FPlGzUjoLuUfIOXzgynnQPPruyK1Ge2B74k9ROwnle1E+NxLWnUv5OLU8hA/qL5leAE9XnXq3byaBw==
   dependencies:
-    "@types/validator" "^13.1.3"
-    libphonenumber-js "^1.9.7"
-    validator "^13.5.2"
+    libphonenumber-js "^1.9.43"
+    validator "^13.7.0"
 
 clean-stack@^2.0.0:
   version "2.2.0"
@@ -4667,10 +4686,10 @@ indent-string@^4.0.0:
   resolved "https://registry.yarnpkg.com/indent-string/-/indent-string-4.0.0.tgz#624f8f4497d619b2d9768531d58f4122854d7251"
   integrity sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg==
 
-indy-sdk-react-native@^0.1.18:
-  version "0.1.20"
-  resolved "https://registry.yarnpkg.com/indy-sdk-react-native/-/indy-sdk-react-native-0.1.20.tgz#be9f192ec1f6b047ea606b4b42b2279433dd0744"
-  integrity sha512-MfSDDofRcmxwUCsDxqeR4RQZ7aSdvSRIUkoKCGpTHXVrPLDXf/5VyAdp9C1xpJaYIegmsoFPk3ICfdv+sGONrw==
+indy-sdk-react-native@0.1.16:
+  version "0.1.16"
+  resolved "https://registry.yarnpkg.com/indy-sdk-react-native/-/indy-sdk-react-native-0.1.16.tgz#db956168cdd27e569c45ac88e8c12baa7a6ac85e"
+  integrity sha512-vsYfq/TNZbF3AYALySNrhtONnSKIHsPdFMo9LSlUNrNZEBQnnR0aZKjAnRSLSYXUo6hF5Njc+AJFpwawWLZqkg==
   dependencies:
     buffer "^6.0.2"
 
@@ -5849,10 +5868,10 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-libphonenumber-js@^1.9.7:
-  version "1.9.48"
-  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.9.48.tgz#b667161600cf2cfd7af0448e857344616fdb6fb4"
-  integrity sha512-2aiDGkr5Ty7LZRhKhnMeV9tfRbzd2zahgF12I0v11AFwEelSdiu5t8/Npf3UejKcuoO4anqTdjnIW3dEtj1xYQ==
+libphonenumber-js@^1.9.43:
+  version "1.9.49"
+  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.9.49.tgz#d431703cd699be2ccced5b95f26182a7c50a9227"
+  integrity sha512-/wEOIONcVboFky+lWlCaF7glm1FhBz11M5PHeCApA+xDdVfmhKjHktHS8KjyGxouV5CSXIr4f3GvLSpJa4qMSg==
 
 lines-and-columns@^1.1.6:
   version "1.2.4"
@@ -8939,7 +8958,7 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-validator@^13.5.2:
+validator@^13.7.0:
   version "13.7.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-13.7.0.tgz#4f9658ba13ba8f3d82ee881d3516489ea85c0857"
   integrity sha512-nYXQLCBkpJ8X6ltALua9dRrZDHVYxjJ1wgskNt1lH9fzGjs3tgojGSCBjmEPwkWS1y29+DrizMTW19Pr9uB2nw==
