@@ -21,6 +21,7 @@ import RootStack from './App/navigators/RootStack'
 import StoreProvider from './App/store/Store'
 import { Colors } from './App/theme'
 import indyLedgers from './configs/ledgers/indy'
+console.disableYellowBox = true
 
 const App = () => {
   const [agent, setAgent] = useState<Agent | undefined>(undefined)
