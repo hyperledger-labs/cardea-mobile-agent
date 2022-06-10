@@ -1,0 +1,338 @@
+diff --git a/app/package-lock.json b/app/package-lock.json
+index afb0681..ed83e6e 100644
+--- a/app/package-lock.json
++++ b/app/package-lock.json
+@@ -238,6 +238,7 @@
+         "react-native-argon2": "^2.0.1",
+         "react-native-camera": "^3.31.1",
+         "react-native-config": "^1.4.2",
++        "react-native-confirmation-code-field": "^7.3.0",
+         "react-native-device-info": "^8.4.9",
+         "react-native-encrypted-storage": "^4.0.2",
+         "react-native-fs": "^2.16.6",
+diff --git a/core/App/theme.ts b/core/App/theme.ts
+index 48a9a80..40356fa 100644
+--- a/core/App/theme.ts
++++ b/core/App/theme.ts
+@@ -108,14 +108,14 @@ export const zeroOpacity = 0.0
+ export const borderWidth = 2
+ 
+ const BrandColors: BrandColors = {
+-  primary: '#42803E',
+-  primaryDisabled: `rgba(53, 130, 63, ${lightOpacity})`,
+-  secondary: '#FFFFFFFF',
+-  secondaryDisabled: `rgba(53, 130, 63, ${heavyOpacity})`,
+-  highlight: '#FCBA19',
+-  primaryBackground: '#000000',
+-  secondaryBackground: '#313132',
+-  link: '#FFFFFF',
++  primary: '#FAA220',
++  primaryDisabled: `rgba(255, 103, 1, ${lightOpacity})`,
++  secondary: '#333545',
++  secondaryDisabled: `rgba(51, 53, 69, ${heavyOpacity})`,
++  highlight: '#CF0022',
++  primaryBackground: '#FFFFFF',
++  secondaryBackground: '#333545',
++  link: '#000000',
+ }
+ 
+ const SemanticColors: SemanticColors = {
+@@ -125,22 +125,22 @@ const SemanticColors: SemanticColors = {
+ }
+ 
+ const NotificationColors: NotificationColors = {
+-  success: '#313132',
+-  successBorder: '#2E8540',
+-  successIcon: '#2E8540',
+-  successText: '#FFFFFF',
++  success: '#606060',
++  successBorder: '#add3ff',
++  successIcon: '#759ECD',
++  successText: '#add3ff',
+   info: '#313132',
+-  infoBorder: '#0099FF',
+-  infoIcon: '#0099FF',
+-  infoText: '#FFFFFF',
+-  warn: '#313132',
++  infoBorder: '#759ECD',
++  infoIcon: '#759ECD',
++  infoText: '#fff',
++  warn: '#add3ff',
+   warnBorder: '#FCBA19',
+   warnIcon: '#FCBA19',
+-  warnText: '#FFFFFF',
+-  error: '#313132',
+-  errorBorder: '#D8292F',
+-  errorIcon: '#D8292F',
+-  errorText: '#FFFFFF',
++  warnText: '#6c3f00',
++  error: '#ffffff',
++  errorBorder: '#759ECD',
++  errorIcon: '#759ECD',
++  errorText: '#759ECD',
+ }
+ 
+ const GrayscaleColors: GrayscaleColors = {
+@@ -163,58 +163,58 @@ export const TextTheme: TextTheme = {
+   headingOne: {
+     fontSize: 38,
+     fontWeight: 'bold',
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+   },
+   headingTwo: {
+     fontSize: 32,
+     fontWeight: 'bold',
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+   },
+   headingThree: {
+     fontSize: 26,
+     fontWeight: 'bold',
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+   },
+   headingFour: {
+     fontSize: 21,
+     fontWeight: 'bold',
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+   },
+   normal: {
+     fontSize: 18,
+     fontWeight: 'normal',
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+   },
+   label: {
+     fontSize: 14,
+     fontWeight: 'bold',
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+   },
+   labelTitle: {
+     fontSize: 16,
+     fontWeight: 'bold',
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+   },
+   labelSubtitle: {
+     fontSize: 14,
+     fontWeight: 'normal',
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+   },
+   labelText: {
+     fontSize: 10,
+     fontWeight: 'normal',
+     fontStyle: 'italic',
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+   },
+   caption: {
+     fontSize: 14,
+     fontWeight: 'normal',
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+   },
+   title: {
+     fontSize: 20,
+     fontWeight: 'bold',
+-    color: ColorPallet.notification.infoText,
++    color: ColorPallet.brand.secondary,
+   },
+ }
+ 
+@@ -246,22 +246,22 @@ export const Inputs: Inputs = StyleSheet.create({
+     color: ColorPallet.grayscale.white,
+   },
+   checkBoxColor: {
+-    color: ColorPallet.brand.primary,
++    color: ColorPallet.notification.infoIcon,
+   },
+   checkBoxText: {
+-    ...TextTheme.normal,
++    color: ColorPallet.brand.primary,
+   },
+ })
+ 
+ export const Buttons = StyleSheet.create({
+   primary: {
+     padding: 16,
+-    borderRadius: 4,
++    borderRadius: 10,
+     backgroundColor: ColorPallet.brand.primary,
+   },
+   primaryDisabled: {
+     padding: 16,
+-    borderRadius: 4,
++    borderRadius: 10,
+     backgroundColor: ColorPallet.brand.primaryDisabled,
+   },
+   primaryText: {
+@@ -278,13 +278,13 @@ export const Buttons = StyleSheet.create({
+   },
+   secondary: {
+     padding: 16,
+-    borderRadius: 4,
++    borderRadius: 10,
+     borderWidth: 2,
+     borderColor: ColorPallet.brand.primary,
+   },
+   secondaryDisabled: {
+     padding: 16,
+-    borderRadius: 4,
++    borderRadius: 10,
+     borderWidth: 2,
+     borderColor: ColorPallet.brand.secondaryDisabled,
+   },
+@@ -304,7 +304,7 @@ export const Buttons = StyleSheet.create({
+ 
+ export const ListItems = StyleSheet.create({
+   credentialBackground: {
+-    backgroundColor: ColorPallet.brand.secondaryBackground,
++    backgroundColor: ColorPallet.grayscale.lightGrey,
+   },
+   credentialTitle: {
+     ...TextTheme.headingFour,
+@@ -313,7 +313,7 @@ export const ListItems = StyleSheet.create({
+     ...TextTheme.caption,
+   },
+   credentialOfferBackground: {
+-    backgroundColor: ColorPallet.brand.primaryBackground,
++    backgroundColor: ColorPallet.grayscale.lightGrey,
+   },
+   credentialOfferTitle: {
+     ...TextTheme.headingThree,
+@@ -326,16 +326,16 @@ export const ListItems = StyleSheet.create({
+     borderColor: ColorPallet.notification.errorBorder,
+   },
+   contactBackground: {
+-    backgroundColor: ColorPallet.brand.secondaryBackground,
++    backgroundColor: ColorPallet.grayscale.lightGrey,
+   },
+   credentialIconColor: {
+     color: ColorPallet.notification.infoText,
+   },
+   contactTitle: {
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+   },
+   contactDate: {
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+     marginTop: 10,
+   },
+   contactIconBackground: {
+@@ -348,10 +348,10 @@ export const ListItems = StyleSheet.create({
+     ...TextTheme.normal,
+   },
+   recordContainer: {
+-    backgroundColor: ColorPallet.brand.secondaryBackground,
++    backgroundColor: ColorPallet.grayscale.lightGrey,
+   },
+   recordBorder: {
+-    borderBottomColor: ColorPallet.brand.primaryBackground,
++    borderBottomColor: ColorPallet.grayscale.white,
+   },
+   recordLink: {
+     color: ColorPallet.brand.link,
+@@ -401,7 +401,7 @@ export const TabTheme = {
+     paddingBottom: 0,
+   },
+   tabBarActiveTintColor: ColorPallet.brand.primary,
+-  tabBarInactiveTintColor: ColorPallet.notification.infoText,
++  tabBarInactiveTintColor: ColorPallet.grayscale.lightGrey,
+   tabBarTextStyle: {
+     ...TextTheme.label,
+     fontWeight: 'normal',
+@@ -412,7 +412,7 @@ export const TabTheme = {
+   },
+   focusTabIconStyle: {
+     height: 60,
+-    width: 60,
++    width: 70,
+     backgroundColor: ColorPallet.brand.primary,
+     top: -20,
+     borderRadius: 60,
+@@ -420,7 +420,7 @@ export const TabTheme = {
+     alignItems: 'center',
+   },
+   focusTabActiveTintColor: {
+-    backgroundColor: ColorPallet.brand.secondary,
++    backgroundColor: ColorPallet.notification.info,
+   },
+ }
+ 
+@@ -483,15 +483,15 @@ export const ChatTheme = {
+     marginRight: 4,
+   },
+   leftText: {
+-    color: ColorPallet.brand.secondary,
++    color: ColorPallet.grayscale.white,
+     fontSize: TextTheme.normal.fontSize,
+   },
+   rightText: {
+-    color: ColorPallet.brand.secondary,
++    color: ColorPallet.grayscale.white,
+     fontSize: TextTheme.normal.fontSize,
+   },
+   inputToolbar: {
+-    backgroundColor: ColorPallet.brand.secondary,
++    backgroundColor: ColorPallet.grayscale.lightGrey,
+     shadowColor: ColorPallet.brand.primaryDisabled,
+     borderRadius: 10,
+   },
+@@ -500,7 +500,7 @@ export const ChatTheme = {
+     fontWeight: '500',
+     fontSize: TextTheme.normal.fontSize,
+   },
+-  placeholderText: ColorPallet.grayscale.lightGrey,
++  placeholderText: ColorPallet.grayscale.darkGrey,
+   sendContainer: {
+     marginBottom: 4,
+     paddingHorizontal: 4,
+@@ -524,14 +524,14 @@ export const OnboardingTheme = {
+     color: ColorPallet.brand.primary,
+   },
+   pagerDotInactive: {
+-    color: ColorPallet.brand.secondary,
++    color: ColorPallet.grayscale.white,
+   },
+   pagerNavigationButton: {
+     color: ColorPallet.brand.primary,
+   },
+   headerTintColor: ColorPallet.grayscale.white,
+   headerText: {
+-    color: ColorPallet.notification.infoText,
++    color: ColorPallet.grayscale.darkGrey,
+     fontSize: 32,
+     fontWeight: 'bold',
+   },
+@@ -541,7 +541,7 @@ export const OnboardingTheme = {
+     color: ColorPallet.notification.infoText,
+   },
+   imageDisplayOptions: {
+-    fill: ColorPallet.notification.infoText,
++    fill: ColorPallet.grayscale.lightGrey,
+   },
+ }
+ 
+@@ -551,14 +551,14 @@ const LoadingTheme = {
+ 
+ const PinInputTheme = {
+   cell: {
+-    backgroundColor: ColorPallet.grayscale.darkGrey,
++    backgroundColor: ColorPallet.grayscale.white,
+     borderColor: ColorPallet.grayscale.darkGrey,
+   },
+   focussedCell: {
+-    borderColor: ColorPallet.grayscale.lightGrey,
++    borderColor: ColorPallet.brand.primary,
+   },
+   cellText: {
+-    color: ColorPallet.grayscale.white,
++    color: ColorPallet.grayscale.darkGrey,
+   },
+   icon: {
+     color: ColorPallet.grayscale.white,

@@ -1,0 +1,295 @@
+diff --git a/README.md b/README.md
+index 0fa784a..c805a95 100644
+--- a/README.md
++++ b/README.md
+@@ -1,6 +1,6 @@
+ # Aries Mobile Agent React Native
+ 
+-Aries Mobile Agent React Native is an open source Aries mobile agent app. This is a project that has been created to focus the community's efforts towards a central open source project. Various different organizations and people have expressed interest in a open source community project to help focus efforts to help prevent duplication of work between projects. Aries Bifold is also intended to help get complex or specific use-case projects started faster by cloning and having a basis of an Aries agent.
++Aries Mobile Agent React Native is an open source Aries mobile agent app. This is a project that has been created to focus the community's efforts towards a central open source project. Various different organizations and people have expressed interest in a open source community project to help focus efforts to help prevent duplication of work between projects. Cardea Holder App is also intended to help get complex or specific use-case projects started faster by cloning and having a basis of an Aries agent.
+ 
+ ## Code
+ 
+@@ -17,17 +17,17 @@ Everybody is welcome to attend and contribute!
+ 
+ ### Platform
+ 
+-Aries Bifold currently is built on React Native 0.64.1
++Cardea Holder App currently is built on React Native 0.64.1
+ 
+-As of now Aries Bifold targets Android API 29.0.3, with plans to support API 30 soon.
++As of now Cardea Holder App targets Android API 29.0.3, with plans to support API 30 soon.
+ 
+-iOS targets iOS 10.0+. Aries Bifold can only be run on physical devices as of right now.
++iOS targets iOS 10.0+. Cardea Holder App can only be run on physical devices as of right now.
+ 
+ ### Testing
+ 
+-Aries Bifold utilizes the [Aries Agent Test Harness (AATH)](https://github.com/hyperledger/aries-agent-test-harness) to test for Aries Agent compatibility and interoperability.
++Cardea Holder App utilizes the [Aries Agent Test Harness (AATH)](https://github.com/hyperledger/aries-agent-test-harness) to test for Aries Agent compatibility and interoperability.
+ 
+-Aries Bifold also utilizes the [Aries Toolbox](https://github.com/hyperledger/aries-toolbox) & [aries-acapy-plugin-toolbox](https://github.com/hyperledger/aries-acapy-plugin-toolbox) for issuer and verifier roles.
++Cardea Holder App also utilizes the [Aries Toolbox](https://github.com/hyperledger/aries-toolbox) & [aries-acapy-plugin-toolbox](https://github.com/hyperledger/aries-acapy-plugin-toolbox) for issuer and verifier roles.
+ 
+ ## Install
+ 
+@@ -90,12 +90,12 @@ Note - To run your own mediator or use a different network, go [here for advance
+ 
+ #### Mediator
+ 
+-In order to use Aries Bifold, you must have a mediator to use with the app. Bifold is configured to use 'Implicit' mediation and requires a mediator that supports the [coordinate-mediation protocol](https://github.com/hyperledger/aries-rfcs/tree/main/features/0211-route-coordination).
++In order to use Cardea Holder App, you must have a mediator to use with the app. Bifold is configured to use 'Implicit' mediation and requires a mediator that supports the [coordinate-mediation protocol](https://github.com/hyperledger/aries-rfcs/tree/main/features/0211-route-coordination).
+ Bifold by default utilizes the [Indicio Public Mediator](https://indicio-tech.github.io/mediator/), which utilizes ACA-Py. For running your own ACA-Py mediator more details can be found [here](https://github.com/hyperledger/aries-cloudagent-python/blob/main/Mediation.md).
+ 
+ #### Network
+ 
+-Aries Bifold as of right now is tied to one ledger with the intention of adding multi-ledger support in the future. You must provide a genesis url for your chosen network, such as:
++Cardea Holder App as of right now is tied to one ledger with the intention of adding multi-ledger support in the future. You must provide a genesis url for your chosen network, such as:
+ 
+ - Indicio TestNet: https://raw.githubusercontent.com/Indicio-tech/indicio-network/main/genesis_files/pool_transactions_testnet_genesis
+ - Sovrin StagingNet: https://raw.githubusercontent.com/sovrin-foundation/sovrin/master/sovrin/pool_transactions_sandbox_genesis
+diff --git a/app/App.tsx b/app/App.tsx
+index 168d701..728146f 100644
+--- a/app/App.tsx
++++ b/app/App.tsx
+@@ -15,7 +15,7 @@ import {
+   OnboardingPages,
+   Splash,
+   Terms,
+-} from "aries-bifold";
++} from "cardeaholder";
+ import React, { useEffect, useState } from "react";
+ import { StatusBar } from "react-native";
+ import SplashScreen from "react-native-splash-screen";
+diff --git a/app/android/app/src/main/java/com/ariesbifold/MainActivity.java b/app/android/app/src/main/java/com/ariesbifold/MainActivity.java
+index ec79ec1..2c2b05b 100644
+--- a/app/android/app/src/main/java/com/ariesbifold/MainActivity.java
++++ b/app/android/app/src/main/java/com/ariesbifold/MainActivity.java
+@@ -24,6 +24,6 @@ public class MainActivity extends ReactActivity {
+     }
+   }
+   protected String getMainComponentName() {
+-    return "aries-bifold";
++    return "cardeaholder";
+   }
+ }
+diff --git a/app/android/app/src/main/res/values/strings.xml b/app/android/app/src/main/res/values/strings.xml
+index 5828d67..7fdee76 100644
+--- a/app/android/app/src/main/res/values/strings.xml
++++ b/app/android/app/src/main/res/values/strings.xml
+@@ -1,3 +1,3 @@
+ <resources>
+-    <string name="app_name">Aries Bifold</string>
++    <string name="app_name">Cardea Holder App</string>
+ </resources>
+diff --git a/app/android/settings.gradle b/app/android/settings.gradle
+index 9dc22c6..914ca98 100644
+--- a/app/android/settings.gradle
++++ b/app/android/settings.gradle
+@@ -1,3 +1,3 @@
+-rootProject.name = 'aries-bifold'
++rootProject.name = 'cardeaholder'
+ apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+ include ':app'
+diff --git a/app/app.json b/app/app.json
+index 97ddb28..0fbcb0e 100644
+--- a/app/app.json
++++ b/app/app.json
+@@ -1,4 +1,4 @@
+ {
+-  "name": "aries-bifold",
+-  "displayName": "Aries Bifold"
++  "name": "cardeaholder",
++  "displayName": "Cardea Holder App"
+ }
+diff --git a/app/index.js b/app/index.js
+index df52f07..2001635 100644
+--- a/app/index.js
++++ b/app/index.js
+@@ -21,7 +21,7 @@ import '@formatjs/intl-datetimeformat/locale-data/en' // locale-data for en
+ import '@formatjs/intl-datetimeformat/add-all-tz' // Add ALL tz data
+ 
+ import { NavigationContainer } from '@react-navigation/native'
+-import { NavigationTheme } from 'aries-bifold'
++import { NavigationTheme } from 'cardeaholder'
+ import React from 'react'
+ import { AppRegistry } from 'react-native'
+ 
+diff --git a/app/ios/AriesBifold/AppDelegate.m b/app/ios/AriesBifold/AppDelegate.m
+index 0b60edb..648a40d 100644
+--- a/app/ios/AriesBifold/AppDelegate.m
++++ b/app/ios/AriesBifold/AppDelegate.m
+@@ -33,7 +33,7 @@ static void InitializeFlipper(UIApplication *application) {
+ 
+   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+-                                                   moduleName:@"aries-bifold"
++                                                   moduleName:@"cardeaholder"
+                                             initialProperties:nil];
+ 
+   if (@available(iOS 13.0, *)) {
+diff --git a/app/package-lock.json b/app/package-lock.json
+index afb0681..a99ae6b 100644
+--- a/app/package-lock.json
++++ b/app/package-lock.json
+@@ -1,11 +1,11 @@
+ {
+-  "name": "aries-bifold-app",
++  "name": "cardeaholder-app",
+   "version": "0.0.1",
+   "lockfileVersion": 2,
+   "requires": true,
+   "packages": {
+     "": {
+-      "name": "aries-bifold-app",
++      "name": "cardeaholder-app",
+       "version": "0.0.1",
+       "hasInstallScript": true,
+       "dependencies": {
+@@ -26,7 +26,7 @@
+         "@react-navigation/core": "6.1.0",
+         "@react-navigation/native": "6.0.6",
+         "@react-navigation/stack": "6.0.11",
+-        "aries-bifold": "file:./../core",
++        "cardeaholder": "file:./../core",
+         "axios": "0.21.4",
+         "i18next": "21.4.0",
+         "indy-sdk-react-native": "0.1.20",
+@@ -72,7 +72,7 @@
+       }
+     },
+     "../bifold-core": {
+-      "name": "aries-bifold",
++      "name": "cardeaholder",
+       "version": "0.0.1",
+       "extraneous": true,
+       "hasInstallScript": true,
+@@ -165,7 +165,7 @@
+       }
+     },
+     "../core": {
+-      "name": "aries-bifold",
++      "name": "cardeaholder",
+       "version": "0.0.1",
+       "hasInstallScript": true,
+       "bin": {
+@@ -3818,7 +3818,7 @@
+         "sprintf-js": "~1.0.2"
+       }
+     },
+-    "node_modules/aries-bifold": {
++    "node_modules/cardeaholder": {
+       "resolved": "../core",
+       "link": true
+     },
+@@ -15387,7 +15387,7 @@
+         "sprintf-js": "~1.0.2"
+       }
+     },
+-    "aries-bifold": {
++    "cardeaholder": {
+       "version": "file:../core",
+       "requires": {
+         "@babel/core": "^7.12.9",
+diff --git a/app/package.json b/app/package.json
+index 49c7273..8218d87 100644
+--- a/app/package.json
++++ b/app/package.json
+@@ -1,6 +1,6 @@
+ {
+-  "name": "aries-bifold-app",
+-  "description": "Aries Bifold Wallet App",
++  "name": "cardeaholder-app",
++  "description": "Cardea Holder App",
+   "version": "0.0.1",
+   "private": true,
+   "scripts": {
+@@ -27,7 +27,7 @@
+     "@react-navigation/core": "6.1.0",
+     "@react-navigation/native": "6.0.6",
+     "@react-navigation/stack": "6.0.11",
+-    "aries-bifold": "file:./../core",
++    "cardeaholder": "file:./../core",
+     "axios": "0.21.4",
+     "i18next": "21.4.0",
+     "indy-sdk-react-native": "0.1.20",
+diff --git a/core/App/navigators/RootStack.tsx b/core/App/navigators/RootStack.tsx
+index 19caf01..fbca1dc 100644
+--- a/core/App/navigators/RootStack.tsx
++++ b/core/App/navigators/RootStack.tsx
+@@ -77,7 +77,7 @@ const RootStack: React.FC<RootStackProps> = (props: RootStackProps) => {
+     try {
+       const newAgent = new Agent(
+         {
+-          label: 'Aries Bifold',
++          label: 'Cardea Holder App',
+           mediatorConnectionsInvite: Config.MEDIATOR_URL,
+           mediatorPickupStrategy: MediatorPickupStrategy.Implicit,
+           walletConfig: { id: 'wallet4', key: '123' },
+diff --git a/core/package-lock.json b/core/package-lock.json
+index df50819..09693fd 100644
+--- a/core/package-lock.json
++++ b/core/package-lock.json
+@@ -1,11 +1,11 @@
+ {
+-  "name": "aries-bifold",
++  "name": "cardeaholder",
+   "version": "0.0.1",
+   "lockfileVersion": 2,
+   "requires": true,
+   "packages": {
+     "": {
+-      "name": "aries-bifold",
++      "name": "cardeaholder",
+       "version": "0.0.1",
+       "hasInstallScript": true,
+       "bin": {
+diff --git a/core/package.json b/core/package.json
+index 40a83ef..0854e92 100644
+--- a/core/package.json
++++ b/core/package.json
+@@ -1,5 +1,5 @@
+ {
+-  "name": "aries-bifold",
++  "name": "cardeaholder",
+   "version": "0.0.1",
+   "scripts": {
+     "style-check": "npm run prettier -- --check",
+diff --git a/docs/design/OS-specific-security-settings.md b/docs/design/OS-specific-security-settings.md
+index 12a64e7..d161ca7 100644
+--- a/docs/design/OS-specific-security-settings.md
++++ b/docs/design/OS-specific-security-settings.md
+@@ -1,6 +1,6 @@
+ # 0. Document Intent
+ 
+-This document is currently in an early stage. It is intended to drive design and thinking that pushes developers of Aries Bifold applications. Over time this document should mature as various organizations deploy secure wallet applications and contribute back here.
++This document is currently in an early stage. It is intended to drive design and thinking that pushes developers of Cardea Holder App applications. Over time this document should mature as various organizations deploy secure wallet applications and contribute back here.
+ 
+ # 1.0 Overarching Design and Constraints
+ 
+diff --git a/docs/design/aries-rfcs.md b/docs/design/aries-rfcs.md
+index f49d1c7..9044f7a 100644
+--- a/docs/design/aries-rfcs.md
++++ b/docs/design/aries-rfcs.md
+@@ -1,6 +1,6 @@
+ # 0.0 Document Intent
+ 
+-This document is intended to be consumed by non-developers so they can build an understanding of the underpinnings of the key cryptography usage in an Aries-based solution. In particular, the Aries Bifold wallet.
++This document is intended to be consumed by non-developers so they can build an understanding of the underpinnings of the key cryptography usage in an Aries-based solution. In particular, the Cardea Holder App wallet.
+ 
+ # 1.0 Key ARIES RFCs
+ 
+diff --git a/package.json b/package.json
+index 95f967b..4077b5f 100644
+--- a/package.json
++++ b/package.json
+@@ -1,7 +1,7 @@
+ {
+-  "name": "bifold-main",
++  "name": "cardeaholder-main",
+   "version": "0.0.1",
+-  "description": "Aries Mobile Agent React Native is an open source Aries mobile agent app. This is a project that has been created to focus the community's efforts towards a central open source project. Various different organizations and people have expressed interest in a open source community project to help focus efforts to help prevent duplication of work between projects. Aries Bifold is also intended to help get complex or specific use-case projects started faster by cloning and having a basis of an Aries agent.",
++  "description": "Cardea mobile holder app",
+   "main": "entry.js",
+   "directories": {
+     "doc": "docs",
